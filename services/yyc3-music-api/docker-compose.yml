@@ -1,0 +1,36 @@
+# ============================================================
+# YYC3-AI-FAmily-Agent- Configuration
+# 人从众曌众从人 · 亦师亦友亦伯乐
+# ============================================================
+# @Module  : yyc3-music-api / docker-compose（NAS 部署）
+# @Author  : YYC3 Team
+# @Date    : 2026-11-17
+# @License : MIT
+# ============================================================
+# 用法（NAS 上，仓库根目录）:
+#   docker compose -p yyc3-music-api -f services/yyc3-music-api/docker-compose.yml up -d --build
+# 环境变量见 services/yyc3-music-api/.env（从 .env.example 复制）:
+#   PG_PRIMARY_URL  主库（NAS 本机 PG 17 · 5433，容器经宿主网关访问）
+#   PG_STANDBY_URL  备库（本机 PG 17 · 5433，只读降级）
+# ============================================================
+
+name: yyc3-music-api
+
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: services/yyc3-music-api/Dockerfile
+    image: yyc3-music-api:latest
+    container_name: yyc3-music-api
+    restart: unless-stopped
+    ports:
+      - "3030:3030"
+    env_file:
+      - .env
+    extra_hosts:
+      # 容器内经 host.docker.internal 访问 NAS 宿主上的 PG（Docker 20.10+）
+      - "host.docker.internal:host-gateway"
+    # 首次启动自动迁移（幂等）；种子按需手动: docker exec yyc3-music-api node dist/seed/seed.js
+    working_dir: /app/services/yyc3-music-api
+    command: sh -c "node dist/db/migrate.js && node dist/index.js"

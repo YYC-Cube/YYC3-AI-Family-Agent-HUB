@@ -7,7 +7,8 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'dist-electron/**', 'coverage/**', 'node_modules/**', 'docs/**', 'scripts/**'] },
+  // services/** 为独立 workspace 包（@yyc3/music-api），自带 eslint 配置与门禁，根配置不扫
+  { ignores: ['dist/**', 'dist-electron/**', 'coverage/**', 'node_modules/**', 'docs/**', 'scripts/**', 'services/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   // 运行环境域声明：no-undef 只对真实 JS 文件有意义；

@@ -1,0 +1,42 @@
+{
+  "name": "@yyc3/music-api",
+  "version": "1.0.0",
+  "description": "YYC3 音乐空间服务端（yyc3-music-api）— yyc3_music 曲库 REST API：艺人/专辑/曲目/MV、收藏、播放历史与心情场景推荐，NAS Docker 部署",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "license": "MIT",
+  "keywords": [
+    "yyc3",
+    "music-api",
+    "family-hub",
+    "postgresql",
+    "fastify"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "migrate": "node dist/db/migrate.js",
+    "seed": "node dist/seed/seed.js",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "fastify": "^5.6.2",
+    "pg": "^8.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/pg": "^8.15.6",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "^10.2.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vitest": "^4.1.11"
+  }
+}

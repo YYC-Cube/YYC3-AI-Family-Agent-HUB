@@ -219,3 +219,56 @@ jobs:
           retention-days: 7
           # .nojekyll 为隐藏文件，默认会被排除导致部署校验失败
           include-hidden-files: true
+
+  # ============================================================
+  # 3. 服务门禁：yyc3-music-api（真库集成测试，postgres:17 容器）
+  # ============================================================
+  service-api:
+    name: Service yyc3-music-api
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: yyc3_music_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter @yyc3/music-api lint
+
+      - name: Type check
+        run: pnpm --filter @yyc3/music-api type-check
+
+      # 真库集成测试：静态种子校验 + 全量 API 用例（迁移/种子由测试自举）
+      - name: Test (integration)
+        run: pnpm --filter @yyc3/music-api test
+        env:
+          MUSIC_API_TEST_PG: postgresql://postgres:postgres@127.0.0.1:5432/yyc3_music_test
