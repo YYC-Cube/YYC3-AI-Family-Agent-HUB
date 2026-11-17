@@ -25,7 +25,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { renderHook, act, cleanup, waitFor } from "@testing-library/react";
+import { renderHook, act, cleanup } from "@testing-library/react";
 import { useBigModelSDK } from "../hooks/useBigModelSDK";
 import { useSDKSessionSlice } from "../store/slices/sdk-session-slice";
 import type { ConfiguredModel, SDKCapability } from "../types";
@@ -275,22 +275,34 @@ describe("useBigModelSDK", () => {
     });
 
     it("应该逐字符更新流式内容", async () => {
-      const { result } = renderHook(() => useBigModelSDK());
+      // Mock 流式为真实定时器（首包 300~1000ms + 每字符 15~40ms，默认文案 ~180 字），
+      // 实际 2.7~7.2s，固定 5s 的 waitFor 必然偶发超时（并非负载抖动）。
+      // 假时钟确定性推进：逐字符定时器按序 flush，用例稳定且不占用真实等待时间。
+      vi.useFakeTimers();
+      try {
+        const { result } = renderHook(() => useBigModelSDK());
 
-      // Start streaming but don't await completion yet
-      let streamDone = false;
-      act(() => {
-        result.current.sendMessageStream(mockModel, "你好", undefined, () => {}).then(() => {
-          streamDone = true;
+        let streamDone = false;
+        let streamPromise: Promise<void> = Promise.resolve();
+        act(() => {
+          streamPromise = result.current
+            .sendMessageStream(mockModel, "你好", undefined, () => {})
+            .then(() => {
+              streamDone = true;
+            });
         });
-      });
 
-      // streaming should be true at some point during the stream
-      await waitFor(() => {
+        // 逐字符定时器链：推进 30s 足以覆盖最长文案（180 字 × 40ms + 首包 1s）
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(30_000);
+        });
+        await streamPromise;
+
         expect(streamDone).toBe(true);
-      }, { timeout: 5000 });
-
-      expect(result.current.streaming).toBe(false);
+        expect(result.current.streaming).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 

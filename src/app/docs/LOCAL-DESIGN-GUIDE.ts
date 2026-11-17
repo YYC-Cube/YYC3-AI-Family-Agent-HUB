@@ -13,7 +13,7 @@
  * - 样式编码规范
  * - 响应式与无障碍规范
  *
- * 导出为 TypeScript 常量，可在 DevGuidePage / DesignSystemPage 中直接引用渲染。
+ * 导出为 TypeScript 常量，可在 DesignSystemPage 中直接引用渲染。
  */
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -224,7 +224,7 @@ export const LAYOUT_SPEC = `
   监控中心:  / · /follow-up · /patrol · /alerts
   运维管理:  /operations · /files · /host-files · /database · /loop · /reports
   AI 智能:   /ai · /models · /ai-diagnosis
-  开发工具:  /design-system · /dev-guide · /theme · /terminal · /ide · /refactoring
+  开发工具(AI Family):  /design-system · /theme · /terminal（原 /dev-guide · /ide · /refactoring 已于 2026-11-18 裁撤）
   系统管理:  /audit · /users · /settings · /security · /pwa
 `;
 
@@ -397,7 +397,7 @@ export const COMPONENT_API_TABLE: ComponentAPI[] = [
   { name: "useWebSocketData",   path: "hooks/useWebSocketData.ts",        category: "Hook",     props: "() => WebSocketDataState",                           description: "实时数据 Hook" },
   { name: "useMobileView",      path: "hooks/useMobileView.ts",          category: "Hook",     props: "() => ViewState",                                    description: "响应式断点 Hook" },
   { name: "useKeyboardShortcuts", path: "hooks/useKeyboardShortcuts.ts", category: "Hook",     props: "(config: ShortcutConfig) => void",                   description: "全局快捷键 Hook" },
-  { name: "useTerminal",        path: "hooks/useTerminal.ts",            category: "Hook",     props: "(tabId?, onNavigate?) => TerminalState",              description: "CLI 终端引擎 Hook" },
+  { name: "useTerminal",        path: "hooks/useTerminal.ts",            category: "Hook",     props: "(tabId?, onNavigate?) => TerminalState",              description: "Family终端引擎 Hook" },
   { name: "usePatrol",          path: "hooks/usePatrol.ts",              category: "Hook",     props: "() => PatrolState",                                  description: "巡查模式 Hook" },
   { name: "useServiceLoop",     path: "hooks/useServiceLoop.ts",         category: "Hook",     props: "() => ServiceLoopState",                             description: "服务闭环 Hook" },
 ];
@@ -565,7 +565,7 @@ export const OPTIMIZATION_SUGGESTIONS: OptimizationSuggestion[] = [
     priority: "P2",
     category: "性能",
     title: "SSG 预渲染静态页面",
-    description: "DevGuidePage、DesignSystemPage 等纯展示页面可预渲染为 HTML，加速首屏",
+    description: "DesignSystemPage 等纯展示页面可预渲染为 HTML，加速首屏",
     effort: "medium",
     impact: "medium",
   },
@@ -625,7 +625,7 @@ export const PROJECT_FILE_INVENTORY = {
     loop: ["ServiceLoopPanel.tsx", "LoopStageCard.tsx", "DataFlowDiagram.tsx"],
     designSystem: ["design-system/DesignSystemPage.tsx", "design-system/DesignTokens.tsx", "design-system/ComponentShowcase.tsx", "design-system/StageReview.tsx"],
     theme: ["ThemeCustomizer.tsx", "theme/ColorPicker.tsx", "theme/ColorSwatch.tsx", "theme/color-utils.ts", "theme/theme-presets.ts"],
-    misc: ["CommandPalette.tsx", "PWAStatusPanel.tsx", "DevGuidePage.tsx", "RefactoringReport.tsx", "ReportExporter.tsx", "AlertRulesPanel.tsx", "CreateRuleModal.tsx", "InlineEditableTable.tsx", "NotFound.tsx"],
+    misc: ["CommandPalette.tsx", "PWAStatusPanel.tsx", "ReportExporter.tsx", "AlertRulesPanel.tsx", "CreateRuleModal.tsx", "InlineEditableTable.tsx", "NotFound.tsx"],
   },
   hooks: {
     total: 26,
@@ -659,7 +659,7 @@ export const PROJECT_FILE_INVENTORY = {
       "/", "/ai-family", "/ai-family/home", "/ai-family/center", "/ai-family/models", "/ai-family/settings",
       "/operations", "/files", "/host-files", "/database", "/loop", "/reports",
       "/ai", "/models", "/ai-diagnosis",
-      "/design-system", "/dev-guide", "/theme", "/terminal", "/ide", "/refactoring",
+      "/design-system", "/theme", "/terminal",
       "/audit", "/users", "/settings", "/security", "/pwa",
       "/*",
     ],

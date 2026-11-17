@@ -7,7 +7,7 @@
  * 审核日期: 2026-03-02
  *
  * ============================================================
- * 导出为 TypeScript 常量，可在 DevGuidePage / DesignSystemPage 中直接引用渲染
+ * 导出为 TypeScript 常量，可在 DesignSystemPage 中直接引用渲染
  * ============================================================
  */
 
@@ -208,7 +208,7 @@ export const CHAPTER_AUDITS: ChapterAudit[] = [
     implementationStatus: "PASS",
     score: 95,
     evidence: [
-      "DevGuidePage: /dev-guide 路由, 技术选型/开发优先级/架构概览 三 Tab",
+      "设计系统页: /design-system 路由, 令牌库Live/设计令牌/组件库/阶段审核 四 Tab（原 DevGuidePage 已随 2026-11-18 导航重构裁撤）",
       "Phase 1 (核心闭环): 操作中心/巡查模式/文件管理 ✅ 全部完成",
       "Phase 2 (智能增强): AI 决策/一键跟进/快捷键 ✅ 全部完成",
       "Phase 3 (终端集成): CLI/IDE 面板/脚本化 ✅ 全部完成",

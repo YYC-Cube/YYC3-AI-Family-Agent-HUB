@@ -203,7 +203,7 @@ export const DIRECTORY_STRUCTURE = `
 │   │   ├── /hooks                  # 自定义 Hooks (19 个)
 │   │   │   ├── useWebSocketData.ts # WebSocket 模拟 + 实时数据
 │   │   │   ├── useBigModelSDK.ts   # AI SDK Bridge
-│   │   │   ├── useTerminal.ts      # CLI 终端引擎
+│   │   │   ├── useTerminal.ts      # Family终端引擎
 │   │   │   ├── useI18n.ts          # 国际化
 │   │   │   ├── useKeyboardShortcuts.ts # 全局快捷键
 │   │   │   ├── useMobileView.ts    # 响应式断点
@@ -305,7 +305,6 @@ export const DIRECTORY_STRUCTURE = `
 │   │   │   ├── UserManagement.tsx     # 用户管理
 │   │   │   ├── SystemSettings.tsx     # 系统设置
 │   │   │   ├── NetworkConfig.tsx      # 网络配置
-│   │   │   ├── DevGuidePage.tsx       # 开发指南
 │   │   │   ├── PWAStatusPanel.tsx     # PWA 状态
 │   │   │   │
 │   │   │   ├── ConnectionStatus.tsx   # 连接状态指示器
@@ -367,11 +366,9 @@ React Router 7 Data Mode (createBrowserRouter)
 │ /ai               │ AISuggestionPanel     │ AI 智能      │
 │ /models           │ ModelProviderPanel    │ AI 智能      │
 │ /loop             │ ServiceLoopPanel      │ AI 智能      │
-│ /design-system    │ DesignSystemPage      │ 开发工具     │
-│ /dev-guide        │ DevGuidePage          │ 开发工具     │
-│ /theme            │ ThemeCustomizer       │ 开发工具     │
-│ /terminal         │ CLITerminal           │ 开发工具     │
-│ /ide              │ IDEPanel              │ 开发工具     │
+│ /design-system    │ DesignSystemPage      │ AI Family    │
+│ /theme            │ ThemeCustomizer       │ AI Family    │
+│ /terminal         │ CLITerminal           │ AI Family    │
 │ /audit            │ OperationAudit        │ 系统管理     │
 │ /users            │ UserManagement        │ 系统管理     │
 │ /settings         │ SystemSettings        │ 系统管理     │
@@ -460,8 +457,8 @@ export const HOOKS_REFERENCE = `
                           Mock 模式 (无 Key 时自动降级)
                           localStorage 持久化 sessions & usage stats
 
-终端:
-  useTerminal.ts          CLI 终端引擎
+终端（Family终端）:
+  useTerminal.ts          Family终端引擎
                           - cpim 系列命令 (status/node/model/alerts/patrol/report/config)
                           - Unix 命令 (ls/cat/pwd/df/ping/htop/neofetch/echo...)
                           - goto/open 路由跳转 (onNavigate 回调)
