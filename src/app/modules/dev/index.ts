@@ -13,24 +13,16 @@
  * @details:
  * - 设计系统 (Design System)
  * - 主题定制 (Theme Customizer)
- * - CLI 终端 (CLI Terminal)
+ * - CLI 终端 (CLI Terminal · 2026-11-18 导航更名 Family终端)
  * - IDE 面板（已拆除——落档 36）
- * - 重构报告 (Refactoring Report)
- * - 架构审计 (Architecture Audit)
- * - 开发指南 (Dev Guide)
+ * - 重构报告/架构审计/开发指南（已裁撤——2026-11-18 导航重构，dev 模块路由随裁撤移除）
  */
-
-// 路由
-export { devRoutes } from './routes';
 
 // 页面组件
 export { DesignSystemPage } from './design-system/DesignSystemPage';
-export { DevGuidePage } from './DevGuidePage';
 export { ThemeCustomizer } from './ThemeCustomizer';
 export { CLITerminal } from './CLITerminal';
 export { IntegratedTerminal } from './IntegratedTerminal';
-export { RefactoringReport } from './RefactoringReport';
-export { ArchitectureAudit } from './ArchitectureAudit';
 
 
 // Hooks

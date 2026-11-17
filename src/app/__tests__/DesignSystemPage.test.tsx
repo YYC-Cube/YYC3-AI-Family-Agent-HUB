@@ -79,15 +79,22 @@ describe("DesignSystemPage", () => {
     expect(screen.getAllByTestId("design-system-page")[0]).toBeInTheDocument();
   });
 
-  it("应有 3 个区域导航", () => {
+  it("应有 4 个区域导航（2026-11-18 令牌库 Live 置首）", () => {
     renderPage();
+    expect(screen.getAllByTestId("section-live")[0]).toBeInTheDocument();
     expect(screen.getAllByTestId("section-tokens")[0]).toBeInTheDocument();
     expect(screen.getAllByTestId("section-components")[0]).toBeInTheDocument();
     expect(screen.getAllByTestId("section-review")[0]).toBeInTheDocument();
   });
 
-  it("默认应显示 Design Tokens", () => {
+  it("默认应显示令牌库 Live", () => {
     renderPage();
+    expect(screen.getAllByTestId("token-live-view")[0]).toBeInTheDocument();
+  });
+
+  it("点击设计令牌应切换到 Design Tokens", () => {
+    renderPage();
+    fireEvent.click(screen.getAllByTestId("section-tokens")[0]);
     expect(screen.getAllByTestId("design-tokens")[0]).toBeInTheDocument();
   });
 

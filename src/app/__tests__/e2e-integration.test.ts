@@ -275,12 +275,12 @@ describe("E2E: i18n 双语覆盖度", () => {
     }
   });
 
-  it("nav.architecture 键存在于双语包", async () => {
+  it("nav.familyTerminal 键存在于双语包（2026-11-18 导航重构：终端更名归置 AI Family）", async () => {
     const { default: zhCN } = await import("../i18n/zh-CN");
     const { default: enUS } = await import("../i18n/en-US");
 
-    expect(zhCN.nav.architecture).toBe("架构审计");
-    expect(enUS.nav.architecture).toBe("Architecture");
+    expect(zhCN.nav.familyTerminal).toBe("Family终端");
+    expect(enUS.nav.familyTerminal).toBe("Family Terminal");
   });
 });
 

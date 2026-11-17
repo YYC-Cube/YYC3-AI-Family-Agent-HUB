@@ -50,6 +50,10 @@ export interface ThemeColors {
   sidebarAccentForeground: string;
   sidebarBorder: string;
   sidebarRing: string;
+  /** 品牌双语义单源（2026-11-18 审计闭环）：辉光青 / 渐变紫 / 周末色 */
+  brandGlow: string;
+  brandPurple: string;
+  weekend: string;
 }
 
 export const DEFAULT_COLORS: ThemeColors = {
@@ -86,6 +90,9 @@ export const DEFAULT_COLORS: ThemeColors = {
   sidebarAccentForeground: "#80dfff",
   sidebarBorder: "#0f3050",
   sidebarRing: "#00d4ff",
+  brandGlow: "#00F0FF",
+  brandPurple: "#7b2ff7",
+  weekend: "#ff006e",
 };
 
 export const THEME_PRESETS: ThemePreset[] = [

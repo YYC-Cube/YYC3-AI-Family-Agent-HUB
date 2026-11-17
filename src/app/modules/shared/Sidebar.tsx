@@ -24,17 +24,14 @@ import {
   Building2,
   ChevronLeft, ChevronRight,
   ClipboardList,
-  Code2,
   Cog,
   Cpu,
   Database,
   FileBarChart,
   FolderOpen,
   Gauge,
-  GitBranch,
   HardDrive,
   House,
-  Layers,
   MessageCircle,
   Package,
   Paintbrush,
@@ -89,6 +86,10 @@ const NAV_CATEGORIES: NavCategory[] = [
       { key: "nav.aiFamilyCenter", path: "/ai-family/center", icon: Sparkles },
       { key: "nav.aiFamilyModels", path: "/ai-family/models", icon: Cpu },
       { key: "nav.aiFamilySettings", path: "/ai-family/settings", icon: Settings2 },
+      // 原开发工具类目页归置（2026-11-18 导航重构：dev 类目移除）
+      { key: "nav.familyTerminal", path: "/terminal", icon: Terminal },
+      { key: "nav.designSystem", path: "/design-system", icon: Palette },
+      { key: "nav.theme", path: "/theme", icon: Paintbrush },
     ],
   },
   {
@@ -120,6 +121,8 @@ const NAV_CATEGORIES: NavCategory[] = [
     ],
   },
   {
+    // 2026-11-18 导航重构：开发指南/重构分析/架构审计三页裁撤，
+    // 终端（Family终端）/设计系统/主题定制归入 AI Family 类目，dev 类目整体移除
     id: "business",
     labelKey: "nav.catBusiness",
     icon: Building2,
@@ -134,19 +137,6 @@ const NAV_CATEGORIES: NavCategory[] = [
       { key: "nav.videoDrama", path: "/video-drama", icon: Film, planned: true },
       { key: "nav.voiceOfYanyu", path: "/voice", icon: Mic, planned: true },
       { key: "nav.commStation", path: "/comm-station", icon: Radio },
-    ],
-  },
-  {
-    id: "dev",
-    labelKey: "nav.catDev",
-    icon: Code2,
-    children: [
-      { key: "nav.designSystem", path: "/design-system", icon: Palette },
-      { key: "nav.devGuide", path: "/dev-guide", icon: BookOpen },
-      { key: "nav.theme", path: "/theme", icon: Paintbrush },
-      { key: "nav.terminal", path: "/terminal", icon: Terminal },
-      { key: "nav.refactoring", path: "/refactoring", icon: GitBranch },
-      { key: "nav.architecture", path: "/architecture", icon: Layers },
     ],
   },
   {

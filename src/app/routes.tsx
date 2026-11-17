@@ -74,9 +74,6 @@ const PWAStatusPanel = lazy(() =>
 const DesignSystemPage = lazy(() =>
   import("./modules/dev/design-system/DesignSystemPage").then((m) => ({ default: m.DesignSystemPage })),
 );
-const DevGuidePage = lazy(() =>
-  import("./modules/dev/DevGuidePage").then((m) => ({ default: m.DevGuidePage })),
-);
 const ModelProviderPanel = lazy(() =>
   import("./modules/ai/ModelProviderPanel").then((m) => ({ default: m.ModelProviderPanel })),
 );
@@ -110,9 +107,6 @@ const HostFileManager = lazy(() =>
 const DatabaseManager = lazy(() =>
   import("./modules/ops/DatabaseManager").then((m) => ({ default: m.DatabaseManager })),
 );
-const RefactoringReport = lazy(() =>
-  import("./modules/dev/RefactoringReport").then((m) => ({ default: m.RefactoringReport })),
-);
 const DataEditorPanel = lazy(() =>
   import("./modules/admin/DataEditorPanel").then((m) => ({ default: m.DataEditorPanel })),
 );
@@ -130,9 +124,6 @@ const ConnectionMonitorPanel = lazy(() =>
 );
 const StorageManager = lazy(() =>
   import("./modules/admin/StorageManager").then((m) => ({ default: m.StorageManager })),
-);
-const ArchitectureAudit = lazy(() =>
-  import("./modules/dev/ArchitectureAudit").then((m) => ({ default: m.ArchitectureAudit })),
 );
 const AIFamilyPage = lazy(() =>
   import("./modules/ai-family/AIFamilyPage").then((m) => ({ default: m.AIFamilyPage })),
@@ -183,7 +174,6 @@ export const router = createHashRouter([
       { path: "loop", Component: withSuspense(ServiceLoopPanel) },
       { path: "pwa", Component: withSuspense(PWAStatusPanel) },
       { path: "design-system", Component: withSuspense(DesignSystemPage) },
-      { path: "dev-guide", Component: withSuspense(DevGuidePage) },
       { path: "models", Component: withSuspense(ModelProviderPanel) },
       { path: "theme", Component: withSuspense(ThemeCustomizer) },
       { path: "terminal", Component: withSuspense(CLITerminal) },
@@ -195,13 +185,11 @@ export const router = createHashRouter([
       { path: "ai-diagnosis", Component: withSuspense(AIDiagnostics) },
       { path: "host-files", Component: withSuspense(HostFileManager) },
       { path: "database", Component: withSuspense(DatabaseManager) },
-      { path: "refactoring", Component: withSuspense(RefactoringReport) },
       { path: "data-editor", Component: withSuspense(DataEditorPanel) },
       { path: "performance", Component: withSuspense(PerformanceMonitor) },
       { path: "env-config", Component: withSuspense(EnvConfigEditor) },
       { path: "db-connections", Component: withSuspense(DatabaseConnectionPanel) },
       { path: "connection-monitor", Component: withSuspense(ConnectionMonitorPanel) },
-      { path: "architecture", Component: withSuspense(ArchitectureAudit) },
       { path: "ai-family", Component: withSuspense(AIFamilyPage) },
       { path: "ai-family/:subpage", Component: withSuspense(AIFamilyRouter) },
       { path: "connection-test", Component: withSuspense(ServiceConnectionTest) },

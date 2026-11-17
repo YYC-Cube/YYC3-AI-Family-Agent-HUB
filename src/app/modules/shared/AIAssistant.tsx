@@ -562,7 +562,7 @@ export function AIAssistant({ isMobile }: AIAssistantProps) {
             {!isMobile && !isMaximized && (
               <GripVertical className="w-3.5 h-3.5 text-[rgba(0,212,255,0.25)] shrink-0" />
             )}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] flex items-center justify-center shadow-[0_0_15px_rgba(0,180,255,0.3)] overflow-hidden">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(0,180,255,0.3)] overflow-hidden">
               <YYC3LogoSvg size={20} showText={false} className="rounded" />
             </div>
             <div>

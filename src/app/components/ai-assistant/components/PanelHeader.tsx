@@ -30,7 +30,7 @@ export function PanelHeader({
   return (
     <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-[rgba(0,180,255,0.12)] bg-[rgba(0,40,80,0.2)]">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] flex items-center justify-center shadow-[0_0_15px_rgba(0,180,255,0.3)] overflow-hidden">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(0,180,255,0.3)] overflow-hidden">
           <YYC3LogoSvg size={20} showText={false} className="rounded" />
         </div>
         <div>

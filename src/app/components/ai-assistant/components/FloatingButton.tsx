@@ -25,11 +25,11 @@ export function FloatingButton({ onClick, isMobile = false, tooltip = "AI 智能
       }}
     >
       <div
-        className="relative rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] flex items-center justify-center shadow-[0_0_30px_rgba(0,180,255,0.4)] hover:shadow-[0_0_40px_rgba(0,180,255,0.6)] transition-all hover:scale-105 active:scale-95"
+        className="relative rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] flex items-center justify-center shadow-[0_0_30px_rgba(0,180,255,0.4)] hover:shadow-[0_0_40px_rgba(0,180,255,0.6)] transition-all hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00d4ff]/60"
         style={{ width: isMobile ? 48 : 56, height: isMobile ? 48 : 56 }}
       >
         <YYC3LogoSvg size={isMobile ? 24 : 28} showText={false} className="rounded-md" />
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] animate-ping opacity-20" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] animate-ping opacity-20" />
         <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#00ff88] flex items-center justify-center shadow-[0_0_8px_rgba(0,255,136,0.5)]">
           <Sparkles className="w-3 h-3 text-[#060e1f]" />
         </div>

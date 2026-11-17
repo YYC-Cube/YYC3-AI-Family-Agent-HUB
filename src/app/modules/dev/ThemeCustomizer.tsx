@@ -19,6 +19,7 @@ import {
   RotateCcw,
   Save,
   Search,
+  Sparkles,
   Sun,
   Type,
   Upload,
@@ -27,6 +28,7 @@ import {
 import React, { useCallback, useContext, useRef, useState } from "react";
 import { ViewContext } from "../../lib/view-context";
 import { useUIPrefsSlice } from "../../store/slices/ui-prefs-slice";
+import { hexToRgb } from "../../config/design-system";
 import { GlassCard } from "../shared/GlassCard";
 import { YYC3Logo } from "../shared/YYC3Logo";
 import { ColorSwatch } from "./theme/ColorSwatch";
@@ -177,6 +179,62 @@ export function ThemeCustomizer() {
       if (br?.backgroundUrl) { setBgPreview(br.backgroundUrl); }
     }
   }, []);
+
+  // ── 实时应用主题到 :root CSS 变量（2026-11-18 完善：编辑即生效，与令牌体系联动）──
+  // 映射表与 src/styles/theme.css 令牌名一一对应；brand 三项为品牌双语义单源
+  const COLOR_VAR_MAP: Array<[keyof ThemeColors, string]> = [
+    ["primary", "--primary"],
+    ["primaryForeground", "--primary-foreground"],
+    ["secondary", "--secondary"],
+    ["secondaryForeground", "--secondary-foreground"],
+    ["accent", "--accent"],
+    ["accentForeground", "--accent-foreground"],
+    ["background", "--background"],
+    ["foreground", "--foreground"],
+    ["card", "--card"],
+    ["cardForeground", "--card-foreground"],
+    ["popover", "--popover"],
+    ["popoverForeground", "--popover-foreground"],
+    ["muted", "--muted"],
+    ["mutedForeground", "--muted-foreground"],
+    ["destructive", "--destructive"],
+    ["destructiveForeground", "--destructive-foreground"],
+    ["border", "--border"],
+    ["input", "--input"],
+    ["ring", "--ring"],
+    ["sidebar", "--sidebar"],
+    ["sidebarForeground", "--sidebar-foreground"],
+    ["sidebarPrimary", "--sidebar-primary"],
+    ["sidebarPrimaryForeground", "--sidebar-primary-foreground"],
+    ["sidebarAccent", "--sidebar-accent"],
+    ["sidebarAccentForeground", "--sidebar-accent-foreground"],
+    ["sidebarBorder", "--sidebar-border"],
+    ["sidebarRing", "--sidebar-ring"],
+    ["brandGlow", "--color-brand-glow"],
+    ["brandPurple", "--color-brand-purple"],
+    ["weekend", "--color-weekend"],
+  ];
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") { return; }
+    const rootStyle = document.documentElement.style;
+    for (const [key, varName] of COLOR_VAR_MAP) {
+      const value = colors[key];
+      if (value) { rootStyle.setProperty(varName, value); }
+    }
+    // RGB 三元组变量（rgba(var(--glow-rgb), a) 组装依赖）
+    const glowRgb = hexToRgb(colors.brandGlow);
+    const weekendRgb = hexToRgb(colors.weekend);
+    if (glowRgb !== "0, 0, 0") { rootStyle.setProperty("--glow-rgb", glowRgb); }
+    if (weekendRgb !== "0, 0, 0") { rootStyle.setProperty("--weekend-rgb", weekendRgb); }
+    // 字族 → display/body/mono 三源
+    rootStyle.setProperty("--font-family-display", typography.sansSerif);
+    rootStyle.setProperty("--font-family-body", typography.sansSerif);
+    rootStyle.setProperty("--font-family-mono", typography.mono);
+    // 阴影 → drop 档；圆角 → 基准
+    rootStyle.setProperty("--shadow-drop-lg", `${shadow.offsetX}px ${shadow.offsetY}px ${shadow.blur}px ${shadow.spread}px ${shadow.color}`);
+    rootStyle.setProperty("--radius", `${radius}rem`);
+  }, [colors, typography, shadow, radius]);
 
   // ── Lightness-based theme adjustment ──
   const adjustedPrimary = (() => {
@@ -386,6 +444,17 @@ export function ThemeCustomizer() {
               <ColorPairRow label1="破坏性" value1={colors.destructive} onChange1={(v) => setColor("destructive", v)} label2="破坏性前景色" value2={colors.destructiveForeground} onChange2={(v) => setColor("destructiveForeground", v)} />
               <ColorPairRow label1="边框" value1={colors.border} onChange1={(v) => setColor("border", v)} />
               <ColorSwatch label="输入" value={colors.input} onChange={(v) => setColor("input", v)} />
+            </div>
+          </Section>
+
+          {/* ══ 1.5 品牌双语义单源（2026-11-18 审计闭环）══ */}
+          <Section title="1.5 品牌双语义 · 辉光青 / 渐变紫 / 周末色" icon={Sparkles}>
+            <div className="space-y-2">
+              <p className="text-[rgba(0,212,255,0.3)]" style={{ fontSize: "0.62rem" }}>
+                操作主色（--primary）之外的三个品牌语义变量——时钟盘辉光 / 渐变紫 / 周末着色全站引用，改此即全局生效
+              </p>
+              <ColorPairRow label1="辉光品牌色" value1={colors.brandGlow} onChange1={(v) => setColor("brandGlow", v)} label2="渐变紫" value2={colors.brandPurple} onChange2={(v) => setColor("brandPurple", v)} />
+              <ColorSwatch label="周末色" value={colors.weekend} onChange={(v) => setColor("weekend", v)} />
             </div>
           </Section>
 

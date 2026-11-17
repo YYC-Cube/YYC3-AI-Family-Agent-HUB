@@ -44,6 +44,22 @@
   --warning: #ffaa00;
   --error: #ff3366;
 
+  /* 品牌双语义单源（2026-11-18 全域审计裁定 C1/C2/C3/C5）：
+     - 操作主色 --primary #00d4ff：按钮 / 链接 / 激活态
+     - 辉光品牌色 --color-brand-glow #00F0FF：时钟盘与辉光语境（原 31 处硬编码收拢于此）
+     - 渐变紫 --color-brand-purple #7b2ff7：品牌渐变语境（原 17 处硬编码收拢于此）；
+       --family-creator #BF00FF 仅成员主题色，两者语义不同不合并
+     - 周末语义色 --color-weekend：时钟盘日期周末着色 */
+  --color-brand-glow: #00F0FF;
+  --glow-rgb: 0, 240, 255;
+  --color-brand-purple: #7b2ff7;
+  --color-weekend: #ff006e;
+  --weekend-rgb: 255, 0, 110;
+
+  /* 品牌字距（时钟盘时间 2px / 品牌行 1px，审计 F7） */
+  --tracking-time: 2px;
+  --tracking-brand: 1px;
+
   /* 图表色 */
   --chart-1: #00d4ff;
   --chart-2: #00ff88;

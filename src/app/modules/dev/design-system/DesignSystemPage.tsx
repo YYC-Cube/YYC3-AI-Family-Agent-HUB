@@ -11,12 +11,13 @@
 
 import React, { useState, useContext } from "react";
 import {
-  Palette, Layers, BookOpen, ClipboardCheck, ChevronRight,
+  Palette, Layers, BookOpen, ClipboardCheck, ChevronRight, Sparkles,
 } from "lucide-react";
 import { GlassCard } from "../../shared/GlassCard";
 import { DesignTokens } from "./DesignTokens";
 import { ComponentShowcase } from "./ComponentShowcase";
 import { StageReview } from "./StageReview";
+import { TokenLiveView } from "./TokenLiveView";
 import { ViewContext } from "../../../lib/view-context";
 import { useI18n } from "../../../hooks/useI18n";
 
@@ -24,9 +25,10 @@ export function DesignSystemPage() {
   const view = useContext(ViewContext);
   const isMobile = view?.isMobile ?? false;
   const { t } = useI18n();
-  const [activeSection, setActiveSection] = useState("tokens");
+  const [activeSection, setActiveSection] = useState("live");
 
   const SECTIONS = [
+    { key: "live",       label: t("designSystem.live"),        icon: Sparkles,       desc: t("designSystem.liveDesc") },
     { key: "tokens",    label: t("designSystem.tokens"),     icon: Palette,        desc: t("designSystem.tokensDesc") },
     { key: "components", label: t("designSystem.components"), icon: Layers,         desc: t("designSystem.componentsDesc") },
     { key: "review",    label: t("designSystem.review"),     icon: ClipboardCheck, desc: t("designSystem.reviewDesc") },
@@ -50,7 +52,7 @@ export function DesignSystemPage() {
       </div>
 
       {/* ======== Section Nav ======== */}
-      <div className={`grid gap-2 ${isMobile ? "grid-cols-1" : "grid-cols-3"}`}>
+      <div className={`grid gap-2 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
         {SECTIONS.map((s) => {
           const Icon = s.icon;
           const isActive = activeSection === s.key;
@@ -82,6 +84,7 @@ export function DesignSystemPage() {
 
       {/* ======== Content ======== */}
       <GlassCard className="p-4">
+        {activeSection === "live" && <TokenLiveView />}
         {activeSection === "tokens" && <DesignTokens />}
         {activeSection === "components" && <ComponentShowcase />}
         {activeSection === "review" && <StageReview />}

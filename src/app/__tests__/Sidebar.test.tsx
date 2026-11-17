@@ -60,7 +60,7 @@ describe("Sidebar Component", () => {
     expect(screen.getAllByText(/nav.catAIFamily/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/nav.catOps/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/nav.catAI/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/nav.catDev/i).length).toBeGreaterThan(0);
+    // 2026-11-18 导航重构：dev 类目裁撤（条目归入 AI Family），catDev 不再存在
     expect(screen.getAllByText(/nav.catAdmin/i).length).toBeGreaterThan(0);
   });
 
@@ -148,13 +148,12 @@ describe("Sidebar Component", () => {
     expect(screen.getAllByText(/nav.aiDiagnostics/i).length).toBeGreaterThan(0);
   });
 
-  it("should render all dev category items", () => {
+  it("should render family tool items inside AI Family category（2026-11-18 导航重构）", () => {
     renderWithRouter(<Sidebar collapsed={false} onToggle={mockOnToggle} />);
 
     expect(screen.getAllByText(/nav.designSystem/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/nav.devGuide/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/nav.familyTerminal/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/nav.theme/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/nav.terminal/i).length).toBeGreaterThan(0);
   });
 
   it("should render all admin category items", () => {

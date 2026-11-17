@@ -64,7 +64,7 @@ export function Login({ onLoginSuccess, onGhostLogin }: LoginProps) {
         <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full opacity-[0.08]"
           style={{ background: "radial-gradient(circle, #00d4ff, transparent 70%)" }} />
         <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full opacity-[0.06]"
-          style={{ background: "radial-gradient(circle, #7b2ff7, transparent 70%)" }} />
+          style={{ background: "radial-gradient(circle, var(--color-brand-purple), transparent 70%)" }} />
       </div>
 
       {/* Ghost mode activation overlay */}

@@ -496,7 +496,7 @@ export function TopBar({
               className={`flex items-center gap-1.5 rounded-lg transition-all min-h-[36px] px-1.5 ${userMenuOpen ? "bg-[rgba(0,212,255,0.06)]" : "hover:bg-[rgba(0,212,255,0.04)]"
                 }`}
             >
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] flex items-center justify-center">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] flex items-center justify-center">
                 <span data-testid="user-initials" className="text-white" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.5rem" }}>{initials}</span>
               </div>
               {!isMobile && (
@@ -508,7 +508,7 @@ export function TopBar({
               <div className="absolute top-10 right-0 w-56 rounded-xl bg-[rgba(6,16,36,0.98)] backdrop-blur-xl border border-[rgba(0,180,255,0.15)] shadow-[0_8px_40px_rgba(0,0,0,0.5)] z-50 overflow-hidden">
                 <div className="px-3.5 py-2.5 border-b border-[rgba(0,180,255,0.08)]">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-md bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-md bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] flex items-center justify-center">
                       <span className="text-white" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem" }}>{initials}</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -588,7 +588,7 @@ export function TopBar({
               {/* ── 用户信息卡 ── */}
               <div className="shrink-0 p-4 border-b border-[rgba(0,180,255,0.06)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#7b2ff7] flex items-center justify-center shadow-[0_0_12px_rgba(0,180,255,0.3)]">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[var(--color-brand-purple)] flex items-center justify-center shadow-[0_0_12px_rgba(0,180,255,0.3)]">
                     <span className="text-white" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem" }}>{initials}</span>
                   </div>
                   <div className="flex-1 min-w-0">

@@ -146,8 +146,8 @@ export function AIFamilyPage() {
           style={{
             width: RING_RADIUS * 2 + 120 * scale,
             height: RING_RADIUS * 2 + 120 * scale,
-            border: "1px solid rgba(0,240,255,0.06)",
-            boxShadow: "0 0 60px rgba(0,240,255,0.03)",
+            border: "1px solid rgba(var(--glow-rgb),0.06)",
+            boxShadow: "0 0 60px rgba(var(--glow-rgb),0.03)",
           }}
         />
         <div
@@ -163,7 +163,7 @@ export function AIFamilyPage() {
           style={{
             width: RING_RADIUS * 2 - 40 * scale,
             height: RING_RADIUS * 2 - 40 * scale,
-            border: "1px solid rgba(0,240,255,0.04)",
+            border: "1px solid rgba(var(--glow-rgb),0.04)",
           }}
         />
       </div>
@@ -189,7 +189,7 @@ export function AIFamilyPage() {
                 y1={Math.sin(angle) * innerR}
                 x2={Math.cos(angle) * outerR}
                 y2={Math.sin(angle) * outerR}
-                stroke={isMajor ? "rgba(0,240,255,0.4)" : "rgba(0,240,255,0.12)"}
+                stroke={isMajor ? "rgba(var(--glow-rgb),0.4)" : "rgba(var(--glow-rgb),0.12)"}
                 strokeWidth={isMajor ? 2 : 1}
               />
             );
@@ -201,7 +201,7 @@ export function AIFamilyPage() {
             x1={0} y1={0}
             x2={Math.cos(hourAngle * Math.PI / 180) * (RING_RADIUS * 0.45)}
             y2={Math.sin(hourAngle * Math.PI / 180) * (RING_RADIUS * 0.45)}
-            stroke="rgba(0,240,255,0.5)"
+            stroke="rgba(var(--glow-rgb),0.5)"
             strokeWidth={3}
             strokeLinecap="round"
           />
@@ -210,7 +210,7 @@ export function AIFamilyPage() {
             x1={0} y1={0}
             x2={Math.cos(minuteAngle * Math.PI / 180) * (RING_RADIUS * 0.6)}
             y2={Math.sin(minuteAngle * Math.PI / 180) * (RING_RADIUS * 0.6)}
-            stroke="rgba(0,240,255,0.4)"
+            stroke="rgba(var(--glow-rgb),0.4)"
             strokeWidth={2}
             strokeLinecap="round"
           />
@@ -219,12 +219,12 @@ export function AIFamilyPage() {
             x1={0} y1={0}
             x2={Math.cos(secondAngleBase * Math.PI / 180) * (RING_RADIUS * 0.7)}
             y2={Math.sin(secondAngleBase * Math.PI / 180) * (RING_RADIUS * 0.7)}
-            stroke="rgba(255,0,110,0.6)"
+            stroke="rgba(var(--weekend-rgb),0.6)"
             strokeWidth={1}
             strokeLinecap="round"
           />
           {/* Center dot */}
-          <circle cx={0} cy={0} r={4 * scale} fill="#00F0FF" />
+          <circle cx={0} cy={0} r={4 * scale} fill="var(--color-brand-glow)" />
 
           {/* Holographic connection lines from center to members */}
           {clockMembers.map((member, i) => {
@@ -267,36 +267,37 @@ export function AIFamilyPage() {
               window.dispatchEvent(new CustomEvent("yyc3:ai-assistant:open"));
             }
           }}
-          className="w-full h-full rounded-full flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00F0FF]/60"
+          className="w-full h-full rounded-full flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-glow)]/60"
           style={{
             background: "radial-gradient(circle, rgba(0,40,80,0.8) 0%, rgba(4,10,22,0.95) 70%)",
-            border: "2px solid rgba(0,240,255,0.3)",
-            boxShadow: "0 0 30px rgba(0,240,255,0.15), inset 0 0 20px rgba(0,240,255,0.05)",
+            border: "2px solid rgba(var(--glow-rgb),0.3)",
+            boxShadow: "var(--shadow-glow-md), inset 0 0 20px rgba(var(--glow-rgb),0.05)",
             animation: "pulse-glow 3s ease-in-out infinite",
           }}
         >
-          <YYC3LogoSvg size={Math.max(22, Math.round(30 * scale))} showText={false} />
-          {/* 品牌字母合并为一行，置于 logo 下方 */}
+          {/* I1：size 64 取 64.png 源，2x/3x DPR 不糊（原 30*scale 取 32.png 位图） */}
+          <YYC3LogoSvg size={Math.max(32, Math.round(34 * scale))} showText={false} />
+          {/* 品牌字母合并为一行，置于 logo 下方；display 字族 + 字阶下限 10px（审计 F1/F2/F3） */}
           <span
             className="flex items-baseline whitespace-nowrap"
-            style={{ marginTop: "4px" }}
+            style={{ marginTop: "var(--spacing-3xs)", fontFamily: "var(--font-family-display)" }}
           >
-            <span style={{ fontSize: `${Math.max(0.42, 0.5 * scale)}rem`, color: "#00F0FF", letterSpacing: "1px", fontWeight: 600 }}>YYC³</span>
-            <span style={{ fontSize: `${Math.max(0.34, 0.4 * scale)}rem`, color: "rgba(0,240,255,0.4)", letterSpacing: "1px", marginLeft: "4px" }}>AI Family</span>
+            <span style={{ fontSize: `${Math.max(0.625, 0.5 * scale)}rem`, color: "var(--color-brand-glow)", letterSpacing: "var(--tracking-brand)", fontWeight: 600 }}>YYC³</span>
+            <span style={{ fontSize: `${Math.max(0.625, 0.4 * scale)}rem`, color: "rgba(var(--glow-rgb),0.4)", letterSpacing: "var(--tracking-brand)", marginLeft: "4px" }}>AI Family</span>
           </span>
         </div>
-        {/* Time + Date display below center */}
+        {/* Time + Date display below center（SP3：归 4px 网格） */}
         <div
           className="absolute left-1/2 -translate-x-1/2 text-center"
-          style={{ top: CENTER_SIZE + 6, whiteSpace: "nowrap" }}
+          style={{ top: CENTER_SIZE + 4, whiteSpace: "nowrap" }}
         >
           <span
             className="font-mono"
             style={{
               fontSize: `${Math.max(0.55, 0.7 * scale)}rem`,
-              color: "#00F0FF",
-              textShadow: "0 0 10px rgba(0,240,255,0.4)",
-              letterSpacing: "2px",
+              color: "var(--color-brand-glow)",
+              textShadow: "0 0 10px rgba(var(--glow-rgb),0.4)",
+              letterSpacing: "var(--tracking-time)",
             }}
           >
             {timeStr}
@@ -308,7 +309,7 @@ export function AIFamilyPage() {
             <span
               style={{
                 fontSize: `${Math.max(0.42, 0.52 * scale)}rem`,
-                color: "rgba(0,240,255,0.35)",
+                color: "rgba(var(--glow-rgb),0.35)",
                 letterSpacing: "1px",
               }}
             >
@@ -317,8 +318,8 @@ export function AIFamilyPage() {
             <span
               style={{
                 fontSize: `${Math.max(0.42, 0.52 * scale)}rem`,
-                color: isWeekend ? "#FF006E" : "rgba(0,240,255,0.35)",
-                textShadow: isWeekend ? "0 0 6px rgba(255,0,110,0.4)" : "none",
+                color: isWeekend ? "var(--color-weekend)" : "rgba(var(--glow-rgb),0.35)",
+                textShadow: isWeekend ? "0 0 6px rgba(var(--weekend-rgb),0.4)" : "none",
                 letterSpacing: "1px",
               }}
             >
@@ -390,8 +391,8 @@ export function AIFamilyPage() {
                   height: LED_SIZE,
                   left: MEMBER_SIZE / 2 + ledOffsetX - LED_SIZE / 2,
                   top: MEMBER_SIZE / 2 + ledOffsetY - LED_SIZE / 2,
-                  background: isSpeaking ? "#FF006E" : member.status === "online" ? "rgba(0,255,136,0.4)" : "rgba(128,128,128,0.3)",
-                  boxShadow: isSpeaking ? "0 0 8px #FF006E" : member.status === "online" ? "0 0 4px rgba(0,255,136,0.3)" : "none",
+                  background: isSpeaking ? "var(--color-weekend)" : member.status === "online" ? "rgba(0,255,136,0.4)" : "rgba(128,128,128,0.3)",
+                  boxShadow: isSpeaking ? "0 0 8px var(--color-weekend)" : member.status === "online" ? "0 0 4px rgba(0,255,136,0.3)" : "none",
                   transition: "all 0.3s ease",
                   border: "1px solid rgba(0,0,0,0.4)",
                 }}
@@ -428,7 +429,7 @@ export function AIFamilyPage() {
             <span
               style={{
                 fontSize: `${Math.max(0.36, 0.45 * scale)}rem`,
-                color: "rgba(0,240,255,0.25)",
+                color: "rgba(var(--glow-rgb),0.25)",
                 marginTop: "1px",
               }}
             >
@@ -468,13 +469,13 @@ export function AIFamilyPage() {
       {/* ======== Top-left title ======== */}
       <div className="absolute top-4 left-5 z-10">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-[#00F0FF]" />
+          <Users className="w-4 h-4 text-[var(--color-brand-glow)]" />
           {/* 落档 49：标题随导航改名（AI Family → Family中枢），副标题走 i18n */}
-          <span style={{ fontSize: "0.8rem", color: "#00F0FF", letterSpacing: "2px" }}>
+          <span style={{ fontSize: "0.8rem", color: "var(--color-brand-glow)", letterSpacing: "2px" }}>
             {t("nav.aiFamily")}
           </span>
         </div>
-        <p className="mt-1" style={{ fontSize: "0.55rem", color: "rgba(0,240,255,0.3)", letterSpacing: "1px" }}>
+        <p className="mt-1" style={{ fontSize: "0.55rem", color: "rgba(var(--glow-rgb),0.3)", letterSpacing: "1px" }}>
           {t("aiFamily.subtitle")}
         </p>
       </div>
@@ -491,7 +492,7 @@ export function AIFamilyPage() {
 
       {/* ======== Bottom slogan ======== */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-center">
-        <p style={{ fontSize: "0.55rem", color: "rgba(0,240,255,0.25)", letterSpacing: "3px" }}>
+        <p style={{ fontSize: "0.55rem", color: "rgba(var(--glow-rgb),0.25)", letterSpacing: "3px" }}>
           亦师亦友亦伯乐 · 一言一语一协同
         </p>
         <p className="mt-1" style={{ fontSize: "0.45rem", color: "rgba(191,0,255,0.25)", letterSpacing: "1px" }}>
@@ -502,8 +503,8 @@ export function AIFamilyPage() {
       {/* CSS Animations */}
       <style>{`
         @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 30px rgba(0,240,255,0.15), inset 0 0 20px rgba(0,240,255,0.05); }
-          50% { box-shadow: 0 0 50px rgba(0,240,255,0.25), inset 0 0 30px rgba(0,240,255,0.1); }
+          0%, 100% { box-shadow: var(--shadow-glow-md), inset 0 0 20px rgba(var(--glow-rgb),0.05); }
+          50% { box-shadow: var(--shadow-glow-lg), inset 0 0 30px rgba(var(--glow-rgb),0.1); }
         }
         @keyframes ring-pulse {
           0% { transform: scale(1); opacity: 0.6; }
@@ -524,7 +525,7 @@ function StatusBadge({ icon: Icon, label, value, color }: {
       className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
       style={{
         background: "rgba(10,10,10,0.6)",
-        border: "1px solid rgba(0,240,255,0.1)",
+        border: "1px solid rgba(var(--glow-rgb),0.1)",
         backdropFilter: "blur(8px)",
       }}
     >
@@ -561,7 +562,7 @@ function MemberDetailDrawer({ member, onClose }: { member: ClockMember; onClose:
           <button
             onClick={onClose}
             title="关闭"
-            className="absolute top-4 right-4 p-1.5 rounded-lg text-[rgba(0,240,255,0.3)] hover:text-[#00F0FF] hover:bg-[rgba(0,240,255,0.08)] transition-all"
+            className="absolute top-4 right-4 p-1.5 rounded-lg text-[rgba(var(--glow-rgb),0.3)] hover:text-[var(--color-brand-glow)] hover:bg-[rgba(var(--glow-rgb),0.08)] transition-all"
           >
             <X className="w-4 h-4" />
           </button>
@@ -593,16 +594,16 @@ function MemberDetailDrawer({ member, onClose }: { member: ClockMember; onClose:
                   className="rounded-full"
                   style={{
                     width: 8, height: 8,
-                    background: member.status === "speaking" ? "#FF006E" : member.status === "online" ? "#00FF88" : "#808080",
-                    boxShadow: member.status === "speaking" ? "0 0 6px #FF006E" : member.status === "online" ? "0 0 6px #00FF88" : "none",
+                    background: member.status === "speaking" ? "var(--color-weekend)" : member.status === "online" ? "#00FF88" : "#808080",
+                    boxShadow: member.status === "speaking" ? "0 0 6px var(--color-weekend)" : member.status === "online" ? "0 0 6px #00FF88" : "none",
                   }}
                 />
                 <span style={{ fontSize: "0.55rem", color: "rgba(192,220,240,0.4)" }}>
                   {member.status === "speaking" ? "发言中" : member.status === "online" ? "在线" : "待命"}
                 </span>
-                <span className="mx-1" style={{ color: "rgba(0,240,255,0.15)" }}>|</span>
-                <Clock className="w-3 h-3" style={{ color: "rgba(0,240,255,0.25)" }} />
-                <span style={{ fontSize: "0.55rem", color: "rgba(0,240,255,0.3)" }}>{member.timeLabel}</span>
+                <span className="mx-1" style={{ color: "rgba(var(--glow-rgb),0.15)" }}>|</span>
+                <Clock className="w-3 h-3" style={{ color: "rgba(var(--glow-rgb),0.25)" }} />
+                <span style={{ fontSize: "0.55rem", color: "rgba(var(--glow-rgb),0.3)" }}>{member.timeLabel}</span>
               </div>
             </div>
           </div>
@@ -654,7 +655,7 @@ function MemberDetailDrawer({ member, onClose }: { member: ClockMember; onClose:
               border: "1px solid rgba(0,180,255,0.08)",
             }}
           >
-            <p className="font-mono" style={{ fontSize: "0.62rem", color: "rgba(0,240,255,0.5)", lineHeight: "1.5" }}>
+            <p className="font-mono" style={{ fontSize: "0.62rem", color: "rgba(var(--glow-rgb),0.5)", lineHeight: "1.5" }}>
               {member.coreAbility}
             </p>
           </div>
@@ -690,7 +691,7 @@ function MemberDetailDrawer({ member, onClose }: { member: ClockMember; onClose:
               style={{
                 background: "rgba(0,40,80,0.2)",
                 border: "1px solid rgba(0,180,255,0.12)",
-                color: "rgba(0,240,255,0.5)",
+                color: "rgba(var(--glow-rgb),0.5)",
                 fontSize: "0.68rem",
               }}
             >
@@ -708,7 +709,7 @@ function SectionTitle({ label, color }: { label: string; color: string }) {
   return (
     <div className="flex items-center gap-2">
       <div className="rounded-full" style={{ width: 6, height: 6, background: color }} />
-      <span style={{ fontSize: "0.62rem", color: "rgba(0,240,255,0.5)", letterSpacing: "1px" }}>
+      <span style={{ fontSize: "0.62rem", color: "rgba(var(--glow-rgb),0.5)", letterSpacing: "1px" }}>
         {label}
       </span>
     </div>
