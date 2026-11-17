@@ -118,9 +118,10 @@ export function AIFamilyPage() {
   const { dateStr, dayLabel, isWeekend } = formatDateInfo(time);
 
   // ===== 自适应尺寸计算 =====
-  // 可用空间 = 容器短边，留出 top/bottom UI 的间距
+  // 可用空间 = 容器短边，留出 top/bottom UI 的间距；
+  // 大屏放宽半径上限（280→340），宽屏下时钟盘占比更饱满
   const usable = Math.min(cW, cH) - 80;        // 留边距
-  const RING_RADIUS = Math.max(120, Math.min(usable * 0.38, 280));
+  const RING_RADIUS = Math.max(120, Math.min(usable * 0.38, 340));
   const scale = RING_RADIUS / 280;              // 相对于设计稿 280 的缩放因子
   const MEMBER_SIZE = Math.round(72 * scale);
   const CENTER_SIZE = Math.round(100 * scale);

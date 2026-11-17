@@ -74,6 +74,11 @@ export function Layout() {
 
   const isDesktop = !view.isMobile && !view.isTablet;
 
+  // 画布型页面（自适应满视口高）：Family中枢首页（/）与 ai-family 族——
+  // h-full 链在此接通（画布组件用 ResizeObserver 按 min(cW,cH) 自缩放）；
+  // 其余流式页面保持默认内边距与 auto 高不受影响。
+  const isCanvasPage = location.pathname === "/" || location.pathname.startsWith("/ai-family");
+
   // 页面配置消费（P0：面板编辑即生效）
   // showHeader/showSidebar：注册表默认全 true，仅显式编辑为 false 时隐藏
   // showBottomNav/maxWidth/padding：注册表默认与现状不一致，仅显式覆盖时接管
@@ -164,15 +169,13 @@ export function Layout() {
               {/* Page content */}
               <div className={`flex-1 overflow-auto ${
                 paddingCls ?? (
-                  location.pathname.startsWith("/ai-family")
+                  isCanvasPage
                     ? ""
                     : view.isMobile ? "px-3 pt-2 pb-[72px]" : view.isTablet ? "px-4 pt-3 pb-[72px]" : "p-4"
                 )
               }`}>
-                {/* 主控指令（落档 43 后）：画布型页面（ai-family 族）撑满视口高——
-                    h-full 链在此接通，其余流式页面保持 auto 高不受影响 */}
                 <div className={`${maxWidthCls ? `${maxWidthCls} mx-auto w-full` : "w-full"} ${
-                  location.pathname.startsWith("/ai-family") ? "h-full" : ""
+                  isCanvasPage ? "h-full" : ""
                 }`}>
                   <ErrorBoundary level="module" source="PageContent">
                     <Suspense fallback={<RouteFallback />}>
