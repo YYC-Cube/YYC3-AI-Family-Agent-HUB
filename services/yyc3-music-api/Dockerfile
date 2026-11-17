@@ -9,7 +9,12 @@
 # ============================================================
 
 # ── 构建阶段：按 workspace filter 安装 + tsc 编译 ──────────
+# NPM_REGISTRY：受限网络环境（NAS）构建时传国内镜像，默认官方源
 FROM node:22-alpine AS build
+ARG NPM_REGISTRY=https://registry.npmjs.org
+ENV npm_config_registry=${NPM_REGISTRY}
+# corepack 下载 pnpm 本体的源（与依赖安装源独立，受限网络须一并指向镜像站）
+ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY}
 WORKDIR /app
 RUN corepack enable
 # workspace 清单 + 锁文件 + 服务包描述（filter 安装只需这三样）
@@ -23,6 +28,9 @@ RUN pnpm build
 
 # ── 运行阶段：仅产物 + 生产依赖 ────────────────────────────
 FROM node:22-alpine AS runner
+ARG NPM_REGISTRY=https://registry.npmjs.org
+ENV npm_config_registry=${NPM_REGISTRY}
+ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY}
 WORKDIR /app
 ENV NODE_ENV=production
 RUN corepack enable
