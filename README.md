@@ -19,10 +19,10 @@
 
 **⭐ GitHub 项目指标 | Repo Metrics**
 
-[![Stars](https://img.shields.io/github/stars/YYC-Cube/YYC3-AI-Family-HUB?style=for-the-badge&logo=github&logoColor=white&label=Stars&color=FFD700)](https://github.com/YYC-Cube/YYC3-AI-Family-HUB/stargazers)
-[![Forks](https://img.shields.io/github/forks/YYC-Cube/YYC3-AI-Family-HUB?style=for-the-badge&logo=github&logoColor=white&label=Forks&color=00D4FF)](https://github.com/YYC-Cube/YYC3-AI-Family-HUB/network/members)
-[![Issues](https://img.shields.io/github/issues/YYC-Cube/YYC3-AI-Family-HUB?style=for-the-badge&logo=github&logoColor=white&label=Issues&color=FF5F57)](https://github.com/YYC-Cube/YYC3-AI-Family-HUB/issues)
-[![Last Commit](https://img.shields.io/github/last-commit/YYC-Cube/YYC3-AI-Family-HUB?style=for-the-badge&logo=github&logoColor=white&label=Last%20Commit&color=646CFF)](https://github.com/YYC-Cube/YYC3-AI-Family-HUB/commits)
+[![Stars](https://img.shields.io/github/stars/YYC-Cube/YYC3-AI-Family-Agent-HUB?style=for-the-badge&logo=github&logoColor=white&label=Stars&color=FFD700)](https://github.com/YYC-Cube/YYC3-AI-Family-Agent-HUB/stargazers)
+[![Forks](https://img.shields.io/github/forks/YYC-Cube/YYC3-AI-Family-Agent-HUB?style=for-the-badge&logo=github&logoColor=white&label=Forks&color=00D4FF)](https://github.com/YYC-Cube/YYC3-AI-Family-Agent-HUB/network/members)
+[![Issues](https://img.shields.io/github/issues/YYC-Cube/YYC3-AI-Family-Agent-HUB?style=for-the-badge&logo=github&logoColor=white&label=Issues&color=FF5F57)](https://github.com/YYC-Cube/YYC3-AI-Family-Agent-HUB/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/YYC-Cube/YYC3-AI-Family-Agent-HUB?style=for-the-badge&logo=github&logoColor=white&label=Last%20Commit&color=646CFF)](https://github.com/YYC-Cube/YYC3-AI-Family-Agent-HUB/commits)
 
 </div>
 
@@ -65,7 +65,7 @@ node deploy/server.mjs  # 本地部署服务（默认 0.0.0.0:3119）
 | 环境前缀 | `AFH_` |
 | Slogan | 八魂归一，云枢乃成（对外）· 亦师亦友亦伴乐，一言一语一协同（对内） |
 
-> 待办：`public/CNAME`（当前沿用母项目 `ops.yyc3.vip`）与 `APP_BRAND.domain` 为分离继承值，新域名确定后两处同步修改（CI 门禁会校验一致性）。
+> 生产域名：`matrix.yyc3.vip`（`public/CNAME` 唯一真源，`APP_BRAND.domain` 同步；CI 门禁校验一致性）· 线上地址：<https://matrix.yyc3.vip>
 
 ## 许可 | License
 

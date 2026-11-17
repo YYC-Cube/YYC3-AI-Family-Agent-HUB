@@ -1,6 +1,6 @@
 # ============================================================================
 #  YYC³ Pages Deploy
-#  GitHub Pages 门禁式部署 → https://ops.yyc3.vip
+#  GitHub Pages 门禁式部署 → https://matrix.yyc3.vip
 # ============================================================================
 #
 # 设计（全链路闭环）:
@@ -9,7 +9,7 @@
 #             → 复用 CI 构建工件 → 部署 GitHub Pages（免二次构建，单一事实源）
 #
 # 前置条件（仓库 Settings → Pages）:
-#   Source = GitHub Actions；自定义域名 ops.yyc3.vip（public/CNAME 为唯一真源）
+#   Source = GitHub Actions；自定义域名 matrix.yyc3.vip（public/CNAME 为唯一真源）
 #
 # 手动触发: workflow_dispatch（支持免门禁紧急发布，请谨慎使用）
 # ============================================================================

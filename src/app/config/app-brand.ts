@@ -48,8 +48,8 @@ export const APP_BRAND = {
   slug: "yyc3-ai-family-hub",
   /** 环境变量前缀 */
   envPrefix: "AFH_",
-  /** 生产域名（public/CNAME 为唯一真源，本仓 Pages 部署域；分离后待负责人定夺新域） */
-  domain: "ops.yyc3.vip",
+  /** 生产域名（public/CNAME 为唯一真源，本仓 Pages 部署域） */
+  domain: "matrix.yyc3.vip",
   author: "YYC³ Team",
   email: "admin@0379.email",
 } as const;

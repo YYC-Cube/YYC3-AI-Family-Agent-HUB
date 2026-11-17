@@ -1,6 +1,6 @@
 # ============================================================================
 #  YYC³ CI Pipeline
-#  YYC³ 本地多端推理矩阵数据库数据看盘 - 持续集成
+#  言语云枢·AI Family 智枢（YYC3 AI Family HUB）- 持续集成
 # ============================================================================
 #
 # 触发条件:
@@ -12,7 +12,7 @@
 #   2. test     → Vitest 单元测试 + 覆盖率报告
 #   3. build    → Vite 生产构建（Pages 就绪包，供 pages-deploy.yml 复用发布）
 #
-# 部署链路: CI 全绿 → pages-deploy.yml（workflow_run 门禁触发）→ ops.yyc3.vip
+# 部署链路: CI 全绿 → pages-deploy.yml（workflow_run 门禁触发）→ matrix.yyc3.vip
 #
 # 覆盖率门槛: 棘轮基线 45/44/31/44 (lines/functions/branches/statements)，
 #   随测试补齐逐步上调至 80/70/80/80（见 vitest.config.ts）
@@ -62,6 +62,7 @@ jobs:
         run: pnpm lint
 
       # 命名规范门禁：页签 Title / 历史品牌残留 / public/CNAME 与 APP_BRAND.domain 一致
+      # （docs/ 为母项目归档资料，允许保留历史品牌引用，不参与残留扫描）
       - name: Brand & domain guard
         run: |
           grep -q "<title>言语云枢·AI Family 智枢</title>" index.html \
@@ -69,7 +70,7 @@ jobs:
           if grep -rnE "(^|[^A-Za-z0-9_])CloudPivot-Matrix([^A-Za-z0-9_]|$)|PivotMatrix|Cloud Intelli-Matrix" \
                --include="*.ts" --include="*.tsx" --include="*.html" --include="*.json" \
                --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=dist-electron \
-               --exclude-dir=coverage --exclude-dir=test-results \
+               --exclude-dir=coverage --exclude-dir=test-results --exclude-dir=docs \
                --exclude="*.test.ts" --exclude="*.test.tsx" \
                --exclude=settings-ssot-slice.ts . ; then
             echo "❌ 检测到母项目品牌残留（CloudPivot-Matrix / PivotMatrix）"; exit 1

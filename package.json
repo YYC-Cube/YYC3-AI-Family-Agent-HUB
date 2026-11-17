@@ -268,7 +268,7 @@
     "publish": {
       "provider": "github",
       "owner": "YYC-Cube",
-      "repo": "YYC3-AI-Family-HUB",
+      "repo": "YYC3-AI-Family-Agent-HUB",
       "private": false
     }
   }
