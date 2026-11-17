@@ -13,8 +13,9 @@
 
 import { useMemo, useState } from "react";
 import { GlassCard } from "./GlassCard";
-import { ArrowLeft, ChevronDown, ChevronRight, ShieldCheck, Users } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronRight, ShieldCheck, Users, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router";
+import { DomainChatPanel } from "./DomainChatPanel";
 import domainPacks from "../../data/domain-packs.json";
 
 interface RoleEntry {
@@ -52,6 +53,7 @@ export function DomainWorkspacePage({ domainId }: DomainWorkspacePageProps) {
     [domainId],
   );
   const [openRole, setOpenRole] = useState<string | null>(null);
+  const [tab, setTab] = useState<"roles" | "chat">("roles");
 
   if (!pack) {
     return (
@@ -109,7 +111,42 @@ export function DomainWorkspacePage({ domainId }: DomainWorkspacePageProps) {
         </div>
       </GlassCard>
 
+      {/* Tab：角色路由表 / 域内对话 */}
+      <div className="flex items-center gap-2" role="tablist" aria-label="域工作区视图">
+        <button
+          role="tab"
+          aria-selected={tab === "roles"}
+          onClick={() => setTab("roles")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
+            tab === "roles"
+              ? "border-[rgba(0,212,255,0.4)] bg-[rgba(0,212,255,0.1)] text-[#00d4ff]"
+              : "border-[rgba(0,180,255,0.15)] text-[rgba(0,212,255,0.5)] hover:text-[#00d4ff]"
+          }`}
+          style={{ fontSize: "0.72rem" }}
+        >
+          <ShieldCheck className="w-3.5 h-3.5" /> 角色路由表
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === "chat"}
+          onClick={() => setTab("chat")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all ${
+            tab === "chat"
+              ? "border-[rgba(0,212,255,0.4)] bg-[rgba(0,212,255,0.1)] text-[#00d4ff]"
+              : "border-[rgba(0,180,255,0.15)] text-[rgba(0,212,255,0.5)] hover:text-[#00d4ff]"
+          }`}
+          style={{ fontSize: "0.72rem" }}
+        >
+          <MessageSquare className="w-3.5 h-3.5" /> 域内对话
+        </button>
+      </div>
+
+      {tab === "chat" && (
+        <DomainChatPanel domainName={pack.name_cn} chain={pack.chain} roles={pack.roles} />
+      )}
+
       {/* 角色路由表 */}
+      {tab === "roles" && (
       <GlassCard className="p-5">
         <h2 className="text-[#e0f0ff] mb-3 flex items-center gap-2" style={{ fontSize: "0.85rem" }}>
           <ShieldCheck className="w-4 h-4 text-[rgba(0,212,255,0.7)]" /> 角色路由表（8 位家族成员 × 域内职能）
@@ -156,9 +193,10 @@ export function DomainWorkspacePage({ domainId }: DomainWorkspacePageProps) {
           })}
         </div>
       </GlassCard>
+      )}
 
       <p className="text-center text-[rgba(0,212,255,0.3)]" style={{ fontSize: "0.62rem" }}>
-        Phase 0 · 域包可视化接入（只读）｜对话式调用将在 Phase 1 接入模型网关
+        Phase 1 · 域包可视化 + 域内对话（人格注入 system，经 HUB 模型网关；DeepSeek / 智谱 / Ollama / YYC 节点自动适配）
       </p>
     </div>
   );
