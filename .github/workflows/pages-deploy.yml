@@ -11,7 +11,12 @@
 # 前置条件（仓库 Settings → Pages）:
 #   Source = GitHub Actions；自定义域名 matrix.yyc3.vip（public/CNAME 为唯一真源）
 #
-# 手动触发: workflow_dispatch（支持免门禁紧急发布，请谨慎使用）
+# 过期部署守卫:
+#   多次 push 的 CI 完成顺序可能与提交顺序颠倒（后完成的旧 CI 后触发部署，
+#   覆盖新版本）。gate job 校验 workflow_run.head_sha 仍为 main 最新 head，
+#   否则跳过本次部署，保证线上始终是最新提交的产物。
+#
+# 手动触发: workflow_dispatch（免门禁紧急发布，取 main 最近一次成功 CI 的工件）
 # ============================================================================
 
 name: YYC³ Pages Deploy
@@ -34,12 +39,58 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # ============================================================
+  # 0. 过期部署守卫：仅 main 最新 head 的 CI 产物可上线
+  # ============================================================
+  gate:
+    name: Staleness Guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      deploy: ${{ steps.check.outputs.deploy }}
+      run-id: ${{ steps.check.outputs.run-id }}
+
+    steps:
+      - name: Check head freshness & resolve CI run
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # workflow_dispatch：紧急发布直接放行，工件取 main 最近一次成功 CI
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            rid="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml \
+              --branch main --status success --limit 1 --json databaseId --jq '.[0].databaseId')"
+            [ -n "$rid" ] || { echo "::error::main 上无成功 CI 运行可复用"; exit 1; }
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "run-id=$rid" >> "$GITHUB_OUTPUT"
+            echo "dispatch → 复用 CI #$rid"
+            exit 0
+          fi
+
+          rid="${{ github.event.workflow_run.id }}"
+          head="${{ github.event.workflow_run.head_sha }}"
+          latest="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+          if [ "$head" = "$latest" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "run-id=$rid" >> "$GITHUB_OUTPUT"
+            echo "head ${head:0:7} 仍为 main 最新，放行部署（CI #$rid）"
+          else
+            echo "::notice::${head:0:7} 已被 ${latest:0:7} 覆盖，跳过过期部署"
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "run-id=$rid" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ============================================================
+  # 1. 部署（复用 CI 工件，不二次构建）
+  # ============================================================
   deploy:
     name: Deploy to Pages
-    # workflow_dispatch 手动触发或上游 CI 成功时执行
+    needs: gate
+    # workflow_dispatch 手动触发或上游 CI 成功且 head 未过期时执行
     if: >
-      github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'success'
+      needs.gate.outputs.deploy == 'true' &&
+      (github.event_name == 'workflow_dispatch' ||
+       github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
@@ -58,7 +109,7 @@ jobs:
         with:
           name: pages-dist
           path: dist
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ needs.gate.outputs.run-id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Verify bundle integrity
