@@ -81,10 +81,10 @@ export function CLITerminal() {
         </div>
         <div>
           <h2 className="text-[#e0f0ff]" style={{ fontSize: "1.1rem" }}>
-            {t("nav.terminal")}
+            {t("nav.familyTerminal")}
           </h2>
           <p className="text-[rgba(0,212,255,0.35)]" style={{ fontSize: "0.7rem" }}>
-            CloudPivot Matrix Ops CLI · {t("nav.terminal")} · {t("nav.ide")}
+            YYC³ AI Family HUB CLI · {t("nav.familyTerminal")}
           </p>
         </div>
       </div>

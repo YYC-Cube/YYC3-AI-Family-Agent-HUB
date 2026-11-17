@@ -53,8 +53,7 @@ vi.mock("../hooks/useI18n", () => ({
   useI18n: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        "nav.terminal": "CLI 终端",
-        "nav.ide": "IDE",
+        "nav.familyTerminal": "Family终端",
         "monitor.commonCommands": "常用命令",
       };
       return translations[key] || key;
@@ -78,9 +77,9 @@ describe("CLITerminal", () => {
       expect(screen.getByTestId("icon-terminal")).toBeInTheDocument();
     });
 
-    it("应该渲染终端标题", () => {
+    it("应该渲染终端标题（2026-11-18 更名 Family终端）", () => {
       render(React.createElement(CLITerminal));
-      expect(screen.getByText("CLI 终端")).toBeInTheDocument();
+      expect(screen.getByText("Family终端")).toBeInTheDocument();
     });
 
     it("应该渲染终端窗口区域", () => {

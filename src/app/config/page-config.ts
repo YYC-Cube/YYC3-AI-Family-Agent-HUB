@@ -449,12 +449,13 @@ export const PAGE_REGISTRY: Record<string, PageConfig> = {
     version: "1.0.0",
   },
 
-  // ── IDE 类（cli-terminal 等开发工具；ide-panel 已随 IDE 模块拆除——落档 36）──
+  // ── Family终端（原 IDE 类开发工具；ide-panel 已随 IDE 模块拆除——落档 36；
+  //    2026-11-18 导航重构：更名 Family终端并归入 AI Family 类目，路径不变）──
   "cli-terminal": {
     id: "cli-terminal",
     path: "/terminal",
-    title: "CLI 终端",
-    titleEn: "CLI Terminal",
+    title: "Family终端",
+    titleEn: "Family Terminal",
     description: "命令行终端、脚本执行",
     icon: "Terminal" as unknown as ElementType,
     category: "ide",

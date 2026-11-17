@@ -72,11 +72,11 @@ interface PaletteItem {
 const PALETTE_ITEMS: PaletteItem[] = [
   { id: "nav-operations", labelKey: "nav.operations", descKey: "operations.subtitle", category: "nav", icon: "Wrench", path: "/operations", shortcut: "⌘+Shift+O" },
   { id: "nav-files", labelKey: "nav.fileManager", descKey: "fileManager.subtitle", category: "nav", icon: "FolderOpen", path: "/files", shortcut: "⌘+Shift+F" },
-  { id: "nav-terminal", labelKey: "nav.terminal", descKey: "palette.navigate", category: "nav", icon: "Terminal", path: "/terminal", shortcut: "⌘+Shift+L" },
+  { id: "nav-terminal", labelKey: "nav.familyTerminal", descKey: "palette.navigate", category: "nav", icon: "Terminal", path: "/terminal", shortcut: "⌘+Shift+L" },
   { id: "nav-ai", labelKey: "nav.aiDecision", descKey: "ai.subtitle", category: "nav", icon: "Bot", path: "/ai" },
   { id: "nav-loop", labelKey: "nav.serviceLoop", descKey: "loop.subtitle", category: "nav", icon: "Activity", path: "/loop" },
-  { id: "nav-design", labelKey: "nav.designSystem", descKey: "devGuide.architecture", category: "nav", icon: "BarChart3", path: "/design-system" },
-  { id: "nav-devguide", labelKey: "nav.devGuide", descKey: "devGuide.subtitle", category: "nav", icon: "Activity", path: "/dev-guide" },
+  { id: "nav-design", labelKey: "nav.designSystem", descKey: "designSystem.liveDesc", category: "nav", icon: "BarChart3", path: "/design-system" },
+  { id: "nav-theme", labelKey: "nav.theme", descKey: "palette.navigate", category: "nav", icon: "Palette", path: "/theme" },
   { id: "nav-models", labelKey: "nav.gatewayDeploy", descKey: "modelProvider.subtitle", category: "nav", icon: "Cpu", path: "/models" },
   /* 业务空间 · 规划中（落档 49） */
   { id: "nav-hotel", labelKey: "nav.hotelDashboard", descKey: "palette.navigate", category: "nav", icon: "Package", path: "/hotel" },
@@ -98,7 +98,6 @@ const PALETTE_ITEMS: PaletteItem[] = [
   { id: "nav-sdkchat", labelKey: "nav.sdkChat", descKey: "palette.navigate", category: "nav", icon: "MessageCircle", path: "/sdk-chat" },
   { id: "nav-hostfiles", labelKey: "nav.hostFiles", descKey: "palette.navigate", category: "nav", icon: "HardDrive", path: "/host-files" },
   { id: "nav-database", labelKey: "nav.database", descKey: "palette.navigate", category: "nav", icon: "Database", path: "/database" },
-  { id: "nav-refactoring", labelKey: "nav.refactoring", descKey: "palette.navigate", category: "nav", icon: "GitBranch", path: "/refactoring" },
   { id: "nav-pwa", labelKey: "nav.pwa", descKey: "pwa.subtitle", category: "nav", icon: "Smartphone", path: "/pwa" },
   { id: "nav-dataeditor", labelKey: "nav.dataEditor", descKey: "palette.navigate", category: "nav", icon: "Package", path: "/data-editor" },
   { id: "nav-performance", labelKey: "nav.performance", descKey: "palette.navigate", category: "nav", icon: "Gauge", path: "/performance" },

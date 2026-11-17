@@ -47,8 +47,8 @@ const COMMANDS: Record<string, string[]> = {
   config: ["set", "get", "list", "patrol.interval", "notification.email"],
   env: ["list", "get", "set", "reset", "export"],
   help: [],
-  goto: ["/", "/operations", "/files", "/ai", "/loop", "/pwa", "/design-system", "/dev-guide", "/models", "/theme", "/terminal", "/audit", "/users", "/settings", "/security", "/reports", "/ai-diagnosis", "/data-editor", "/performance", "/env-config", "/host-files", "/database", "/refactoring"],
-  open: ["/", "/operations", "/files", "/ai", "/loop", "/pwa", "/design-system", "/dev-guide", "/models", "/theme", "/terminal", "/audit", "/users", "/settings", "/security", "/reports", "/ai-diagnosis", "/data-editor", "/performance", "/env-config", "/host-files", "/database", "/refactoring"],
+  goto: ["/", "/operations", "/files", "/ai", "/loop", "/pwa", "/design-system", "/models", "/theme", "/terminal", "/audit", "/users", "/settings", "/security", "/reports", "/ai-diagnosis", "/data-editor", "/performance", "/env-config", "/host-files", "/database"],
+  open: ["/", "/operations", "/files", "/ai", "/loop", "/pwa", "/design-system", "/models", "/theme", "/terminal", "/audit", "/users", "/settings", "/security", "/reports", "/ai-diagnosis", "/data-editor", "/performance", "/env-config", "/host-files", "/database"],
   ai: [],
   kb: ["search", "list", "stats", "categories"],
 };
@@ -62,11 +62,9 @@ const ROUTE_LABELS: Record<string, string> = {
   "/loop": "服务闭环",
   "/pwa": "PWA 状态",
   "/design-system": "设计系统",
-  "/dev-guide": "开发指南",
   "/models": "模型供应商",
   "/theme": "主题定制",
-  "/terminal": "终端",
-  "/ide": "IDE 面板",
+  "/terminal": "Family终端",
   "/audit": "操作审计",
   "/users": "用户管理",
   "/settings": "系统设置",
@@ -79,7 +77,6 @@ const ROUTE_LABELS: Record<string, string> = {
   "/env-config": "环境变量",
   "/host-files": "主机文件",
   "/database": "数据库",
-  "/refactoring": "重构报告",
 };
 
 // ============================================================

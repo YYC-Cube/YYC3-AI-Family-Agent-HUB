@@ -12,20 +12,17 @@
 import {
   Activity,
   Bell,
-  BookOpen,
   Brain,
   BrainCircuit,
   Building2,
   ChevronDown, ChevronRight,
   ClipboardList,
-  Code2,
   Cog,
   Cpu,
   Database,
   FileBarChart,
   FolderOpen,
   Ghost,
-  GitBranch,
   HardDrive,
   House,
   LogOut,
@@ -83,6 +80,10 @@ const MOBILE_NAV: MobileNavCategory[] = [
       { key: "nav.aiFamilyCenter", path: "/ai-family/center", icon: Sparkles },
       { key: "nav.aiFamilyModels", path: "/ai-family/models", icon: Cpu },
       { key: "nav.aiFamilySettings", path: "/ai-family/settings", icon: Settings2 },
+      // 2026-11-18 导航重构：原开发工具类目条目归入 AI Family（终变更名 Family终端）
+      { key: "nav.familyTerminal", path: "/terminal", icon: Terminal },
+      { key: "nav.designSystem", path: "/design-system", icon: Palette },
+      { key: "nav.theme", path: "/theme", icon: Paintbrush },
     ],
   },
   {
@@ -109,16 +110,6 @@ const MOBILE_NAV: MobileNavCategory[] = [
     children: [
       { key: "nav.hotelDashboard", path: "/hotel", icon: Building2 },
       { key: "nav.commStation", path: "/comm-station", icon: Radio },
-    ],
-  },
-  {
-    id: "dev", labelKey: "nav.catDev", icon: Code2,
-    children: [
-      { key: "nav.designSystem", path: "/design-system", icon: Palette },
-      { key: "nav.devGuide", path: "/dev-guide", icon: BookOpen },
-      { key: "nav.theme", path: "/theme", icon: Paintbrush },
-      { key: "nav.terminal", path: "/terminal", icon: Terminal },
-      { key: "nav.refactoring", path: "/refactoring", icon: GitBranch },
     ],
   },
   {
@@ -261,7 +252,8 @@ export function TopBar({
   }, [mobileMenuOpen]);
 
   const displayName = userEmail ? userEmail.split("@")[0] : "Admin";
-  const roleLabel = userRole === "admin" ? t("nav.userMgmt") : userRole === "developer" ? t("nav.devGuide") : t("nav.userMgmt");
+  // 2026-11-18 导航重构：devGuide 已裁撤，开发者角色徽标改用 Family终端 文案
+  const roleLabel = userRole === "admin" ? t("nav.userMgmt") : userRole === "developer" ? t("nav.familyTerminal") : t("nav.userMgmt");
   const initials = displayName.slice(0, 2).toUpperCase();
 
   const isDesktop = !isMobile && !isTablet;
