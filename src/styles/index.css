@@ -1,0 +1,47 @@
+/**
+ * @file: index.css
+ * @description: 全局样式入口 · 导入字体、Tailwind、主题样式
+ * @author: YanYuCloudCube Team
+ * @version: v1.0.0
+ * @created: 2026-03-31
+ * @updated: 2026-04-09
+ * @status: active
+ * @tags: [style],[global],[entry]
+ *
+ * @brief: 全局样式入口文件
+ *
+ * @details:
+ * - 导入字体样式
+ * - 导入 Tailwind CSS
+ * - 导入主题变量
+ * - 全局样式重置
+ *
+ * @dependencies: TailwindCSS, Custom Theme
+ * @exports: -
+ * @notes: 在 main.tsx 中引入，确保全局生效
+ */
+
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* ============================================================
+ * Electron 桌面端窗口拖拽区（titleBarStyle: hiddenInset）
+ * - TopBar 根元素挂 .yyc3-app-drag：整条顶栏可作为拖拽区
+ * - 交互元素（按钮/输入/下拉/链接/弹层）一律 no-drag，保证可点击
+ * - Web 浏览器环境忽略 -webkit-app-region，不影响 Web/PWA
+ * ============================================================ */
+.yyc3-app-drag {
+  -webkit-app-region: drag;
+}
+.yyc3-app-drag button,
+.yyc3-app-drag input,
+.yyc3-app-drag select,
+.yyc3-app-drag textarea,
+.yyc3-app-drag a,
+.yyc3-app-drag [role='button'],
+.yyc3-app-drag [role='menuitem'],
+.yyc3-app-drag [data-radix-popper-content-wrapper],
+.yyc3-app-no-drag {
+  -webkit-app-region: no-drag;
+}

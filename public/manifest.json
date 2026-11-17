@@ -1,0 +1,44 @@
+{
+  "name": "言语云枢·AI Family 智枢 | YYC3 AI Family HUB",
+  "short_name": "AI Family 智枢",
+  "description": "家族智能中枢 — 八位 AI 家人的时钟盘、群聊协同、模型管理与家族空间",
+  "theme_color": "#060e1f",
+  "background_color": "#060e1f",
+  "display": "standalone",
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/",
+  "id": "/",
+  "categories": ["utilities", "productivity"],
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "yyc3-icons/Web%20App/android-chrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "yyc3-icons/Web%20App/android-chrome-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "yyc3-icons/Web%20App/android-chrome-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "yyc3-icons/Web%20App/favicon-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "yyc3-icons/Web%20App/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

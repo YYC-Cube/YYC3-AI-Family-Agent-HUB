@@ -1,0 +1,517 @@
+/**
+ * @file: settings-ssot-slice.ts
+ * @description: Settings SSOT (Single Source of Truth) — 统一4套设置存储为单一数据源
+ * @author: YanYuCloudCube Team
+ * @version: v1.0.0
+ * @created: 2026-04-30
+ * @updated: 2026-04-30
+ * @status: active
+ * @tags: [store],[slice],[settings],[ssot]
+ *
+ * @brief: 合并 useSettingsStore + global-store config + api-config + variable-center 为统一 Slice
+ *
+ * @details:
+ * - 统一管理: 系统设置 / API端点 / 运行时配置 / 变量中心
+ * - 向后兼容: 自动从旧 localStorage 键迁移数据
+ * - 单一持久化: yyc3-settings-ssot
+ * - BroadcastChannel 多标签页同步
+ * - Zod 校验集成
+ *
+ * @dependencies: zustand, immer, api-config, config-validator
+ */
+
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
+import {
+  VARIABLE_DEFINITIONS,
+  loadVariableValues,
+  saveVariableValues,
+  validateVariable,
+  type VariableValue,
+} from '../../config/variable-center';
+import {
+  DEFAULT_WS_ENDPOINT,
+  getAPIConfig,
+  onAPIConfigChange,
+  resetAPIConfig as resetAPIEndpoints, setAPIConfig,
+  type APIEndpoints
+} from '../../lib/api-config';
+import { APP_BRAND } from '../../config/app-brand';
+import { onEnvConfigChange } from '../../lib/env-config';
+import { captureError } from '../../lib/error-handler';
+
+let _apiConfigUnsubscribe: (() => void) | null = null;
+let _envConfigUnsubscribe: (() => void) | null = null;
+
+export interface SettingsToggles {
+  autoScale: boolean;
+  healthCheck: boolean;
+  alertEmail: boolean;
+  alertSlack: boolean;
+  darkMode: boolean;
+  autoBackup: boolean;
+  mfa: boolean;
+  auditLog: boolean;
+  rateLimiting: boolean;
+  cacheEnabled: boolean;
+  wsAutoReconnect: boolean;
+  wsHeartbeat: boolean;
+  aiStreamMode: boolean;
+  aiContextMemory: boolean;
+  debugMode: boolean;
+  performanceLog: boolean;
+  autoUpdate: boolean;
+  dataCompression: boolean;
+  corsEnabled: boolean;
+  /** 演示模式：开启时各模块使用内置模拟数据；生产环境必须关闭（默认 false） */
+  demoMode: boolean;
+  /** 批5：OpsPanel 多节点真实指标轮询开关 */
+  opsPanelEnabled: boolean;
+}
+
+export interface SettingsValues {
+  systemName: string;
+  clusterId: string;
+  brandName: string;
+  brandSlogan1: string;
+  brandSlogan2: string;
+  brandSlogan3: string;
+  refreshInterval: string;
+  language: string;
+  timezone: string;
+  maxNodes: string;
+  loadBalanceStrategy: string;
+  healthCheckInterval: string;
+  scaleUpThreshold: string;
+  scaleDownThreshold: string;
+  wsEndpoint: string;
+  wsToken: string;
+  /** 批5：OpsPanel（YYC3-OpsPanel FastAPI）基地址——全节点真实指标源，UI 可编辑即时生效 */
+  opsPanelBaseUrl: string;
+  wsReconnectInterval: string;
+  wsMaxReconnect: string;
+  wsHeartbeatInterval: string;
+  wsThrottleMs: string;
+  aiApiKey: string;
+  aiBaseUrl: string;
+  aiModel: string;
+  aiTemperature: string;
+  aiTopP: string;
+  aiMaxTokens: string;
+  aiTimeout: string;
+  dbHost: string;
+  dbPort: string;
+  dbName: string;
+  dbUser: string;
+  dbPassword: string;
+  dbPoolSize: string;
+  sessionTimeout: string;
+  ipWhitelist: string;
+  alertGpuThreshold: string;
+  alertTempThreshold: string;
+  alertEmailAddr: string;
+  webhookUrl: string;
+  backupSchedule: string;
+  logLevel: string;
+  logRetention: string;
+  maxConcurrency: string;
+  cacheSize: string;
+  cacheTTL: string;
+}
+
+export interface RuntimeConfig {
+  autoRefresh: boolean;
+  refreshInterval: number;
+  enableNotifications: boolean;
+  enableSounds: boolean;
+  compactMode: boolean;
+}
+
+const DEFAULT_TOGGLES: SettingsToggles = {
+  autoScale: true,
+  healthCheck: true,
+  alertEmail: true,
+  alertSlack: false,
+  darkMode: true,
+  autoBackup: true,
+  mfa: true,
+  auditLog: true,
+  rateLimiting: true,
+  cacheEnabled: true,
+  wsAutoReconnect: true,
+  wsHeartbeat: true,
+  aiStreamMode: true,
+  aiContextMemory: true,
+  debugMode: false,
+  performanceLog: true,
+  autoUpdate: false,
+  dataCompression: true,
+  corsEnabled: true,
+  demoMode: false,
+  opsPanelEnabled: true,
+};
+
+const DEFAULT_VALUES: SettingsValues = {
+  systemName: `${APP_BRAND.fullNameZh} v1.0.0`,
+  clusterId: "CN-EAST-PROD-01",
+  brandName: APP_BRAND.nameZh,
+  brandSlogan1: "言启象限 | 语枢未来",
+  brandSlogan2: "言启千行代码 | 语枢万物智能",
+  brandSlogan3: "万象归元于云枢 | 深栈智启新纪元",
+  refreshInterval: "5",
+  language: "zh-CN",
+  timezone: "Asia/Shanghai",
+  maxNodes: "16",
+  loadBalanceStrategy: "轮询 (Round Robin)",
+  healthCheckInterval: "30",
+  scaleUpThreshold: "85",
+  scaleDownThreshold: "30",
+  wsEndpoint: DEFAULT_WS_ENDPOINT,
+  wsToken: "",
+  opsPanelBaseUrl: "http://127.0.0.1:7864",
+  wsReconnectInterval: "5000",
+  wsMaxReconnect: "10",
+  wsHeartbeatInterval: "30000",
+  wsThrottleMs: "100",
+  aiApiKey: "",
+  aiBaseUrl: "https://api.openai.com/v1",
+  aiModel: "",
+  aiTemperature: "0.7",
+  aiTopP: "0.9",
+  aiMaxTokens: "2048",
+  aiTimeout: "30000",
+  dbHost: "localhost",
+  dbPort: "5433",
+  dbName: "cpim_matrix",
+  dbUser: "yyc_admin",
+  dbPassword: "",
+  dbPoolSize: "20",
+  sessionTimeout: "30",
+  ipWhitelist: "192.168.1.0/24\n10.0.0.0/16\n172.16.0.0/12",
+  alertGpuThreshold: "90",
+  alertTempThreshold: "80",
+  alertEmailAddr: "admin@cloudpivot.ai",
+  webhookUrl: "",
+  backupSchedule: "0 2 * * *",
+  logLevel: "info",
+  logRetention: "30",
+  maxConcurrency: "100",
+  cacheSize: "512",
+  cacheTTL: "3600",
+};
+
+const DEFAULT_RUNTIME: RuntimeConfig = {
+  autoRefresh: true,
+  refreshInterval: 5000,
+  enableNotifications: true,
+  enableSounds: false,
+  compactMode: false,
+};
+
+interface SettingsSSOTState {
+  _version: number;
+  _migrated: boolean;
+  toggles: SettingsToggles;
+  values: SettingsValues;
+  runtime: RuntimeConfig;
+  apiEndpoints: APIEndpoints;
+  variableValues: Record<string, VariableValue>;
+}
+
+interface SettingsSSOTActions {
+  toggleSetting: (key: keyof SettingsToggles) => void;
+  setToggle: (key: keyof SettingsToggles, value: boolean) => void;
+  updateValue: (key: keyof SettingsValues, val: string) => void;
+  updateValues: (updates: Partial<SettingsValues>) => void;
+  updateRuntime: (updates: Partial<RuntimeConfig>) => void;
+  updateAPIEndpoint: (updates: Partial<APIEndpoints>) => void;
+  setVariableValue: (key: string, value: unknown, source?: VariableValue["source"]) => void;
+  resetVariableValue: (key: string) => void;
+  resetAllVariables: () => void;
+  resetSettings: () => void;
+  resetAPIEndpoints: () => void;
+  exportAll: () => string;
+  importAll: (json: string) => boolean;
+  getVariableValue: (key: string) => VariableValue;
+}
+
+/**
+ * 品牌升级归一化（双轨命名落地）：
+ * 仅当值仍是旧默认品牌时替换为新默认，用户自定义值不做覆盖。
+ * 供 persist migrate（v1→v2）与 legacy 归并（onRehydrateStorage）两处复用。
+ */
+function normalizeLegacyBrand(values: Partial<SettingsValues>): void {
+  if (values.brandName === "YanYuCloudCube") {
+    values.brandName = APP_BRAND.nameZh;
+  }
+  if (typeof values.systemName === "string" && /^YYC³? (Cloud Intelli-Matrix|PivotMatrix Ops)/.test(values.systemName)) {
+    values.systemName = DEFAULT_VALUES.systemName;
+  }
+}
+
+function migrateFromLegacyStores(): Partial<SettingsSSOTState> {
+  const migrated: Partial<SettingsSSOTState> = {
+    _version: 1,
+    _migrated: false,
+    toggles: { ...DEFAULT_TOGGLES },
+    values: { ...DEFAULT_VALUES },
+    runtime: { ...DEFAULT_RUNTIME },
+    variableValues: loadVariableValues(),
+  };
+
+  try {
+    const sysRaw = localStorage.getItem("yyc3_system_settings");
+    if (sysRaw) {
+      const saved = JSON.parse(sysRaw);
+      if (saved.toggles) { migrated.toggles = { ...DEFAULT_TOGGLES, ...saved.toggles }; }
+      if (saved.values) { migrated.values = { ...DEFAULT_VALUES, ...saved.values }; }
+    }
+  } catch { /* ignore */ }
+
+  try {
+    const globalRaw = localStorage.getItem("yyc3-global-store");
+    if (globalRaw) {
+      const saved = JSON.parse(globalRaw);
+      const state = saved?.state;
+      if (state) {
+        migrated.runtime = {
+          autoRefresh: state.autoRefresh ?? DEFAULT_RUNTIME.autoRefresh,
+          refreshInterval: state.refreshInterval ?? DEFAULT_RUNTIME.refreshInterval,
+          enableNotifications: state.enableNotifications ?? DEFAULT_RUNTIME.enableNotifications,
+          enableSounds: state.enableSounds ?? DEFAULT_RUNTIME.enableSounds,
+          compactMode: state.compactMode ?? DEFAULT_RUNTIME.compactMode,
+        };
+      }
+    }
+  } catch { /* ignore */ }
+
+  migrated.apiEndpoints = getAPIConfig();
+  migrated._migrated = true;
+
+  return migrated;
+}
+
+export type SettingsSSOTSlice = SettingsSSOTState & SettingsSSOTActions;
+
+export const useSettingsSSOT = create<SettingsSSOTSlice>()(
+  devtools(
+    persist(
+      immer((set, get) => ({
+        _version: 1,
+        _migrated: false,
+        toggles: { ...DEFAULT_TOGGLES },
+        values: { ...DEFAULT_VALUES },
+        runtime: { ...DEFAULT_RUNTIME },
+        apiEndpoints: getAPIConfig(),
+        variableValues: loadVariableValues(),
+
+        toggleSetting: (key) => {
+          set((state) => {
+            state.toggles[key] = !state.toggles[key];
+          });
+        },
+
+        setToggle: (key, value) => {
+          set((state) => {
+            state.toggles[key] = value;
+          });
+        },
+
+        updateValue: (key, val) => {
+          set((state) => {
+            state.values[key] = val;
+          });
+          if (key === 'wsEndpoint') {
+            setAPIConfig({ wsEndpoint: val });
+          }
+          if (key === 'aiBaseUrl') {
+            setAPIConfig({ aiBase: val });
+          }
+        },
+
+        updateValues: (updates) => {
+          set((state) => {
+            Object.assign(state.values, updates);
+          });
+        },
+
+        updateRuntime: (updates) => {
+          set((state) => {
+            Object.assign(state.runtime, updates);
+          });
+        },
+
+        updateAPIEndpoint: (updates) => {
+          const newConfig = setAPIConfig(updates);
+          set((state) => {
+            state.apiEndpoints = newConfig;
+          });
+        },
+
+        setVariableValue: (key, value, source = 'user') => {
+          const def = VARIABLE_DEFINITIONS.find((v) => v.key === key);
+          if (def) {
+            const result = validateVariable(key, value);
+            if (!result.valid) {
+              captureError(new Error(`Variable validation failed: ${result.errors.join(', ')}`), {
+                category: 'VALIDATION',
+                severity: 'warning',
+                source: 'settings-ssot.setVariableValue',
+              });
+              return;
+            }
+          }
+          set((state) => {
+            state.variableValues[key] = {
+              key,
+              value,
+              source,
+              updatedAt: Date.now(),
+            };
+          });
+          saveVariableValues(get().variableValues);
+        },
+
+        resetVariableValue: (key) => {
+          set((state) => {
+            delete state.variableValues[key];
+          });
+          saveVariableValues(get().variableValues);
+        },
+
+        resetAllVariables: () => {
+          set((state) => {
+            state.variableValues = {};
+          });
+          saveVariableValues({});
+        },
+
+        resetSettings: () => {
+          set((state) => {
+            state.toggles = { ...DEFAULT_TOGGLES };
+            state.values = { ...DEFAULT_VALUES };
+            state.runtime = { ...DEFAULT_RUNTIME };
+          });
+        },
+
+        resetAPIEndpoints: () => {
+          const defaults = resetAPIEndpoints();
+          set((state) => {
+            state.apiEndpoints = defaults;
+          });
+        },
+
+        exportAll: () => {
+          const s = get();
+          return JSON.stringify({
+            _exportedAt: new Date().toISOString(),
+            _source: 'settings-ssot',
+            toggles: s.toggles,
+            values: s.values,
+            runtime: s.runtime,
+            apiEndpoints: s.apiEndpoints,
+            variableValues: s.variableValues,
+          }, null, 2);
+        },
+
+        importAll: (json) => {
+          try {
+            const data = JSON.parse(json);
+            set((state) => {
+              if (data.toggles) { state.toggles = { ...DEFAULT_TOGGLES, ...data.toggles }; }
+              if (data.values) { state.values = { ...DEFAULT_VALUES, ...data.values }; }
+              if (data.runtime) { state.runtime = { ...DEFAULT_RUNTIME, ...data.runtime }; }
+              if (data.apiEndpoints) {
+                state.apiEndpoints = setAPIConfig(data.apiEndpoints);
+              }
+              if (data.variableValues) { state.variableValues = data.variableValues; }
+            });
+            saveVariableValues(get().variableValues);
+            return true;
+          } catch {
+            return false;
+          }
+        },
+
+        getVariableValue: (key) => {
+          const stored = get().variableValues[key];
+          if (stored) { return stored; }
+          const def = VARIABLE_DEFINITIONS.find((v) => v.key === key);
+          return {
+            key,
+            value: def?.defaultValue,
+            source: 'default' as const,
+            updatedAt: Date.now(),
+          };
+        },
+      })),
+      {
+        name: 'yyc3-settings-ssot',
+        // 批6：v2→v3 触发 migrate 为旧 persist 补新字段默认值
+        // （zustand persist 在 version 相同时走浅合并，values/toggles 整体被旧结构
+        //  替换 → 新增字段运行时为 undefined——OpsPanel 端点/开关即因此失效）
+        version: 3,
+        migrate: (persisted, version) => {
+          let state = persisted as SettingsSSOTState;
+          if (version < 1) {
+            const legacy = migrateFromLegacyStores();
+            state = Object.assign({}, state, legacy) as SettingsSSOTState;
+          }
+          if (version < 2) {
+            // 品牌升级迁移（A1 主选命名落地）
+            const values = (state as unknown as { values?: Partial<SettingsValues> }).values;
+            if (values) { normalizeLegacyBrand(values); }
+          }
+          if (version < 3) {
+            // v2→v3：为旧结构补新增字段默认值（toggles 同理，保留用户已有设置）
+            if (!state.toggles) { state.toggles = { ...DEFAULT_TOGGLES }; }
+            else { state.toggles = { ...DEFAULT_TOGGLES, ...state.toggles }; }
+            if (!state.values) { state.values = { ...DEFAULT_VALUES }; }
+            else { state.values = { ...DEFAULT_VALUES, ...state.values }; }
+          }
+          return state;
+        },
+        onRehydrateStorage: () => {
+          return (state) => {
+            if (state && !state._migrated) {
+              const legacy = migrateFromLegacyStores();
+              Object.assign(state, legacy);
+              state._migrated = true;
+            }
+
+            // 品牌归一化：覆盖 legacy 归并与历史持久化两条路径（用户自定义值不受影响）
+            if (state?.values) { normalizeLegacyBrand(state.values); }
+
+            // 新增开关兜底：历史持久化的 toggles 不含后续新增 key（如 demoMode），
+            // 用 DEFAULT_TOGGLES 回填缺失字段，保证新开关有确定默认值（生产语义）。
+            if (state?.toggles) { state.toggles = { ...DEFAULT_TOGGLES, ...state.toggles }; }
+
+            if (_apiConfigUnsubscribe) { _apiConfigUnsubscribe(); }
+            _apiConfigUnsubscribe = onAPIConfigChange((config) => {
+              if (state) {
+                state.apiEndpoints = config;
+              }
+            });
+
+            if (_envConfigUnsubscribe) { _envConfigUnsubscribe(); }
+            _envConfigUnsubscribe = onEnvConfigChange((config) => {
+              if (state) {
+                state.values.wsEndpoint = config.WS_ENDPOINT;
+                state.values.aiBaseUrl = config.DEFAULT_AI_BASE_URL;
+                state.values.aiModel = config.DEFAULT_AI_MODEL;
+                state.values.aiTemperature = String(config.DEFAULT_AI_TEMPERATURE);
+                state.values.aiMaxTokens = String(config.DEFAULT_AI_MAX_TOKENS);
+                state.values.aiTimeout = String(config.DEFAULT_AI_TIMEOUT);
+                state.values.sessionTimeout = String(config.SESSION_TIMEOUT_MIN);
+                state.values.clusterId = config.CLUSTER_ID;
+                state.values.systemName = config.SYSTEM_NAME;
+              }
+            });
+          };
+        },
+      }
+    ),
+    { name: 'YYC3-Settings-SSOT' }
+  )
+);

@@ -1,0 +1,33 @@
+node_modules
+dist
+dist-ssr
+dist-electron
+*.local
+
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+coverage
+test-results
+
+.env
+.env.local
+.env.*.local
+
+.DS_Store
+Thumbs.db
+
+*.tsbuildinfo
+
+# 本机个人配置 (MCP / IDE 本地环境)
+yyc3-cn-assistant.json
+.vscode/
+
+# 本机工具产物（安全扫描/视频代理/浏览器工具）
+.mimosa/
+.v2c/
+.video_agent/
+
+# 用户个人参照截图（82M，个人资产不入库）
+public/项目导航-对齐截图/
