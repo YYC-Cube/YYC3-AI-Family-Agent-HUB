@@ -252,6 +252,13 @@ export function AIAssistant({ isMobile }: AIAssistantProps) {
   const [cmdFilter, setCmdFilter] = useState<string>("all");
   const [copiedId, copyToClipboard] = useCopyFeedback<string>();
 
+  // 全局打开事件：首页表盘中心圆等外部入口派发 yyc3:ai-assistant:open
+  useEffect(() => {
+    const handler = () => setIsOpen(true);
+    window.addEventListener("yyc3:ai-assistant:open", handler);
+    return () => window.removeEventListener("yyc3:ai-assistant:open", handler);
+  }, []);
+
   // 自动选中第一个可用模型
   useEffect(() => {
     if (!selectedModel && availableModels.length > 0) {

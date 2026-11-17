@@ -22,6 +22,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useClockMinutes } from "../../hooks/useClock";
 import { useI18n } from "../../hooks/useI18n";
 import { useFamilyMemberSlice } from "./store";
+import { YYC3LogoSvg } from "../shared/YYC3LogoSvg";
 import type { UnifiedFamilyMember } from "./types";
 
 // ======== 时钟布局扩展 ========
@@ -253,8 +254,20 @@ export function AIFamilyPage() {
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
         style={{ width: CENTER_SIZE, height: CENTER_SIZE }}
       >
+        {/* AI 浮窗按钮纯 logo 映射进中心圆：点击唤起 AI 助手（与右下浮窗同源） */}
         <div
-          className="w-full h-full rounded-full flex flex-col items-center justify-center cursor-pointer"
+          role="button"
+          tabIndex={0}
+          aria-label="打开 AI 智能助理"
+          title="AI 智能助理 (⌘J)"
+          onClick={() => window.dispatchEvent(new CustomEvent("yyc3:ai-assistant:open"))}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              window.dispatchEvent(new CustomEvent("yyc3:ai-assistant:open"));
+            }
+          }}
+          className="w-full h-full rounded-full flex flex-col items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00F0FF]/60"
           style={{
             background: "radial-gradient(circle, rgba(0,40,80,0.8) 0%, rgba(4,10,22,0.95) 70%)",
             border: "2px solid rgba(0,240,255,0.3)",
@@ -262,8 +275,15 @@ export function AIFamilyPage() {
             animation: "pulse-glow 3s ease-in-out infinite",
           }}
         >
-          <span style={{ fontSize: `${Math.max(0.5, 0.65 * scale)}rem`, color: "#00F0FF", letterSpacing: "2px" }}>YYC³</span>
-          <span style={{ fontSize: `${Math.max(0.35, 0.45 * scale)}rem`, color: "rgba(0,240,255,0.4)", marginTop: "2px" }}>AI Family</span>
+          <YYC3LogoSvg size={Math.max(22, Math.round(30 * scale))} showText={false} />
+          {/* 品牌字母合并为一行，置于 logo 下方 */}
+          <span
+            className="flex items-baseline whitespace-nowrap"
+            style={{ marginTop: "4px" }}
+          >
+            <span style={{ fontSize: `${Math.max(0.42, 0.5 * scale)}rem`, color: "#00F0FF", letterSpacing: "1px", fontWeight: 600 }}>YYC³</span>
+            <span style={{ fontSize: `${Math.max(0.34, 0.4 * scale)}rem`, color: "rgba(0,240,255,0.4)", letterSpacing: "1px", marginLeft: "4px" }}>AI Family</span>
+          </span>
         </div>
         {/* Time + Date display below center */}
         <div
