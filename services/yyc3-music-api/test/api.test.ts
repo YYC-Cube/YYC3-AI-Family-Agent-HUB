@@ -41,7 +41,7 @@ describe("yyc3-music-api 集成（真库）", () => {
     await runMigrations(primary);
     await runSeed(primary);
     pools = { primary, standby: null };
-    app = buildApp(pools);
+    app = buildApp(pools, { corsOrigins: ["http://localhost:3218", "https://matrix.yyc3.vip"] });
   });
 
   afterAll(async () => {
@@ -145,5 +145,26 @@ describe("yyc3-music-api 集成（真库）", () => {
     expect(ok.statusCode).toBe(201);
     expect(ok.json().song.id).toBe("Music-Mp3/test/demo-song");
     expect(ok.json().song.source).toBe("local");
+  });
+
+  dbIt("CORS：白名单来源预检 204 且放行头正确", async () => {
+    const res = await app.inject({
+      method: "OPTIONS",
+      url: "/api/music/songs",
+      headers: { origin: "http://localhost:3218", "access-control-request-method": "GET" },
+    });
+    expect(res.statusCode).toBe(204);
+    expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3218");
+    expect(String(res.headers["access-control-expose-headers"])).toContain("X-Family");
+  });
+
+  dbIt("CORS：非白名单来源不下发放行头", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: "/health",
+      headers: { origin: "https://evil.example.com" },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.headers["access-control-allow-origin"]).toBeUndefined();
   });
 });

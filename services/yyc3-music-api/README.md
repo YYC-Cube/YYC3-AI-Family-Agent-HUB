@@ -80,6 +80,10 @@ docker exec yyc3-music-api node dist/seed/seed.js                      # 首次�
 
 所有响应注入家族网关头（`X-Family` / `X-Family-Motto` / `X-Family-Core` / `X-Powered-By` / `X-Family-Rose`）。
 
+**CORS**：白名单来源（`CORS_ORIGINS`，缺省含本地开发端口、`https://matrix.yyc3.vip`、Electron `Origin: null`）可直接跨源调用，预检 `OPTIONS` 返回 204 并暴露上述家族头；非白名单来源不下发放行头。
+
+**前端接入**：`src/app/lib/music/MusicApiClient.ts` + `MusicLibrary.ts`（API 优先、内置曲库离线兜底）。基址经 `VITE_AFH_MUSIC_API_BASE` 或 `localStorage["yyc3.music.apiBase"]` 配置，留空即离线模式。
+
 ## 四、数据模型（migrations/001-init.sql）
 
 `artists` · `albums` · `songs`（`moods`/`activities` 为 `text[]` + GIN 索引，`id` = 前端静态资源相对路径）· `photos` · `videos` · `favorites` · `play_history`（推荐热度来源）。种子固化真实媒体清单：3 艺人（沫言/沫语/董小姐）· 5 专辑 · 27 曲 · 7 MV。

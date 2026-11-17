@@ -32,18 +32,36 @@ export interface MusicApiConfig {
   host: string;
   /** 家用单用户键（多用户扩展时改为鉴权体系） */
   defaultUserKey: string;
+  /** CORS 允许来源（浏览器端 Pages / Electron / 本地开发）；"*" 表示放行任意来源 */
+  corsOrigins: string[];
 }
+
+/** 默认放行来源：本地开发端口 + Pages 生产域 + Electron file://（Origin: null） */
+const DEFAULT_CORS_ORIGINS = [
+  "http://localhost:3218",
+  "http://127.0.0.1:3218",
+  "http://localhost:3118",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:4173",
+  "https://matrix.yyc3.vip",
+  "null",
+];
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): MusicApiConfig {
   const primaryUrl = env.PG_PRIMARY_URL ?? "";
   if (!primaryUrl) {
     throw new Error("缺少 PG_PRIMARY_URL（主库连接串，形如 postgresql://user:pass@nas-host:5433/yyc3_music）");
   }
+  const corsOrigins = env.CORS_ORIGINS
+    ? env.CORS_ORIGINS.split(",").map((origin) => origin.trim()).filter(Boolean)
+    : DEFAULT_CORS_ORIGINS;
   return {
     primaryUrl,
     standbyUrl: env.PG_STANDBY_URL || null,
     port: Number(env.PORT ?? 3030),
     host: env.HOST ?? "0.0.0.0",
     defaultUserKey: env.DEFAULT_USER_KEY ?? "family",
+    corsOrigins,
   };
 }

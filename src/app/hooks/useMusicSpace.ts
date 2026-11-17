@@ -15,10 +15,15 @@ import {
   type AudioAnalyzerData,
 } from "../lib/music/AudioPlayerService";
 import {
-  getAllSongs,
-  getSongsByActivity,
-  getSongsByMood,
-} from "../lib/music/MusicData";
+  fetchLikedSongIds,
+  fetchLibraryRecommendation,
+  getActiveSongs,
+  getBuiltinLibrary,
+  loadMusicLibrary,
+  reportSongPlay,
+  syncSongFavorite,
+  type MusicLibrarySnapshot,
+} from "../lib/music/MusicLibrary";
 import type {
   MusicActivity,
   MusicMood,
@@ -56,6 +61,10 @@ export interface UseMusicSpaceReturn {
   playerState: MusicSpacePlayerState;
   playlist: MusicSong[];
   recommendation: MusicRecommendation | null;
+  /** 当前曲库快照（API 优先，内置兜底） */
+  library: MusicLibrarySnapshot;
+  /** 已收藏曲目 id（远端曲库启用时来自 yyc3_music.favorites） */
+  favoriteSongIds: string[];
   isListening: boolean;
   analyzerData: AudioAnalyzerData | null;
   equalizerPreset: string;
@@ -76,6 +85,10 @@ export interface UseMusicSpaceReturn {
   recommendByActivity: (activity: MusicActivity) => MusicSong[];
   setEqualizerPreset: (preset: string) => void;
   loadPlaylist: (songs: MusicSong[]) => void;
+  /** 重新拉取曲库（切换 API 基址后调用） */
+  refreshLibrary: () => Promise<void>;
+  /** 收藏/取消收藏（本地即时生效 + 远端同步） */
+  syncFavorite: (songId: string, liked: boolean) => void;
   startVoiceControl: () => void;
   stopVoiceControl: () => void;
 }
@@ -141,10 +154,12 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
   const [playlist, setPlaylist] = useState<MusicSong[]>([]);
   const [recommendation, setRecommendation] = useState<MusicRecommendation | null>(
     () => ({
-      songs: getAllSongs(),
+      songs: getActiveSongs(),
       reason: "根据你的收听偏好，为你精选 YYC³ 音乐空间全部曲目",
     })
   );
+  const [library, setLibrary] = useState<MusicLibrarySnapshot>(() => getBuiltinLibrary());
+  const [favoriteSongIds, setFavoriteSongIds] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [analyzerData, setAnalyzerData] = useState<AudioAnalyzerData | null>(null);
   const [equalizerPreset, setEqualizerPresetState] = useState("flat");
@@ -169,6 +184,8 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
     } else {
       setIsPlaying(false);
     }
+    // 播放历史上报（远端曲库启用时生效，失败静默）
+    reportSongPlay(song.id);
     optionsRef.current.onSongChange?.(song);
   }, []);
 
@@ -341,7 +358,7 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
     if (!keyword) {
       return [];
     }
-    return getAllSongs().filter((song) =>
+    return getActiveSongs().filter((song) =>
       [song.title, song.artist, song.album].some((field) =>
         field.toLowerCase().includes(keyword)
       )
@@ -349,19 +366,57 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
   }, []);
 
   const recommendByMood = useCallback((mood: MusicMood): MusicSong[] => {
-    const songs = getSongsByMood(mood);
+    const songs = getActiveSongs().filter((song) => song.moods?.includes(mood));
     setRecommendation({ songs, reason: `匹配「${mood}」心情的推荐曲目`, mood });
+    // 远端推荐异步增强（NAS 曲库按热度优先），失败保留本地结果
+    void fetchLibraryRecommendation({ mood }).then((remote) => {
+      if (remote && remote.songs.length > 0) {
+        setRecommendation(remote);
+      }
+    });
     return songs;
   }, []);
 
   const recommendByActivity = useCallback((activity: MusicActivity): MusicSong[] => {
-    const songs = getSongsByActivity(activity);
+    const songs = getActiveSongs().filter((song) => song.activities?.includes(activity));
     setRecommendation({
       songs,
       reason: `适合「${activity}」场景的推荐曲目`,
       activity,
     });
+    void fetchLibraryRecommendation({ activity }).then((remote) => {
+      if (remote && remote.songs.length > 0) {
+        setRecommendation(remote);
+      }
+    });
     return songs;
+  }, []);
+
+  /** 重新拉取曲库（API 基址切换/手动刷新） */
+  const refreshLibrary = useCallback(async () => {
+    const snapshot = await loadMusicLibrary(true);
+    setLibrary(snapshot);
+    setRecommendation({
+      songs: snapshot.songs,
+      reason:
+        snapshot.source === "api"
+          ? "已连接 yyc3_music 曲库，为你精选全部曲目 🌹"
+          : "根据你的收听偏好，为你精选 YYC³ 音乐空间全部曲目",
+    });
+  }, []);
+
+  /** 收藏/取消收藏：本地即时 + 远端同步 */
+  const syncFavorite = useCallback((songId: string, liked: boolean) => {
+    setFavoriteSongIds((prev) => {
+      const next = new Set(prev);
+      if (liked) {
+        next.add(songId);
+      } else {
+        next.delete(songId);
+      }
+      return [...next];
+    });
+    syncSongFavorite(songId, liked);
   }, []);
 
   const setEqualizerPreset = useCallback((preset: string) => {
@@ -382,6 +437,28 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
       audioPlayerService.pause();
     };
   }, [handleEnded]);
+
+  // 挂载时加载曲库（API 优先，失败回退内置）并同步收藏
+  useEffect(() => {
+    let alive = true;
+    void loadMusicLibrary().then((snapshot) => {
+      if (!alive) return;
+      setLibrary(snapshot);
+      setRecommendation({
+        songs: snapshot.songs,
+        reason:
+          snapshot.source === "api"
+            ? "已连接 yyc3_music 曲库，为你精选全部曲目 🌹"
+            : "根据你的收听偏好，为你精选 YYC³ 音乐空间全部曲目",
+      });
+    });
+    void fetchLikedSongIds().then((ids) => {
+      if (alive && ids.length > 0) setFavoriteSongIds(ids);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   // 轮询同步进度/时长/播放状态/频谱数据
   useEffect(() => {
@@ -437,6 +514,8 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
     playerState,
     playlist,
     recommendation,
+    library,
+    favoriteSongIds,
     isListening,
     analyzerData,
     equalizerPreset,
@@ -455,6 +534,8 @@ export function useMusicSpace(options: UseMusicSpaceOptions = {}): UseMusicSpace
     recommendByActivity,
     setEqualizerPreset,
     loadPlaylist,
+    refreshLibrary,
+    syncFavorite,
     startVoiceControl,
     stopVoiceControl,
   };

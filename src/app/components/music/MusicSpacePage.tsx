@@ -44,13 +44,6 @@ import { FloatingCD } from './FloatingCD';
 import { useMusicSpace } from '../../hooks/useMusicSpace';
 import { useI18n } from '../../hooks/useI18n';
 import type { MusicSong, MusicActivity, MusicMood } from '../../lib/music/types';
-import { 
-  ALBUMS, 
-  ARTIST, 
-  PHOTOS, 
-  VIDEOS, 
-  getAllSongs
-} from '../../lib/music/MusicData';
 
 type TabType = 'recommend' | 'mood' | 'activity' | 'albums' | 'artist' | 'search' | 'equalizer' | 'source';
 
@@ -109,6 +102,8 @@ export const MusicSpacePage: React.FC = () => {
   const {
     playerState,
     recommendation,
+    library,
+    favoriteSongIds,
     isListening,
     analyzerData,
     startVoiceControl,
@@ -128,6 +123,7 @@ export const MusicSpacePage: React.FC = () => {
     recommendByActivity,
     setEqualizerPreset,
     loadPlaylist,
+    syncFavorite,
   } = useMusicSpace({
     autoPlay: false,
     onSongChange: (song) => {
@@ -144,6 +140,13 @@ export const MusicSpacePage: React.FC = () => {
       loadPlaylist(recommendation.songs);
     }
   }, [recommendation, loadPlaylist]);
+
+  // 远端收藏回填本地点赞态
+  useEffect(() => {
+    if (favoriteSongIds.length > 0) {
+      setLikedSongs(new Set(favoriteSongIds));
+    }
+  }, [favoriteSongIds]);
 
   const handleSongSelect = useCallback(
     async (song: MusicSong, index: number) => {
@@ -217,14 +220,17 @@ export const MusicSpacePage: React.FC = () => {
   const toggleLike = useCallback((songId: string) => {
     setLikedSongs((prev) => {
       const next = new Set(prev);
-      if (next.has(songId)) {
-        next.delete(songId);
-      } else {
+      const liked = !next.has(songId);
+      if (liked) {
         next.add(songId);
+      } else {
+        next.delete(songId);
       }
+      // 远端曲库启用时同步收藏
+      syncFavorite(songId, liked);
       return next;
     });
-  }, []);
+  }, [syncFavorite]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -336,7 +342,7 @@ export const MusicSpacePage: React.FC = () => {
               className="space-y-4"
             >
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {ALBUMS.map((album) => (
+                {library.albums.map((album) => (
                   <button
                     key={album.id}
                     onClick={() => {
@@ -361,7 +367,7 @@ export const MusicSpacePage: React.FC = () => {
                     </div>
                     <h3 className="text-white font-medium truncate">{album.nameZh}</h3>
                     <p className="text-white/50 text-sm truncate">{album.songs.length} 首歌曲</p>
-                    <p className="text-white/30 text-xs mt-1">{album.year}</p>
+                    <p className="text-white/30 text-xs mt-1">{album.year > 0 ? album.year : ''}</p>
                   </button>
                 ))}
               </div>
@@ -378,28 +384,28 @@ export const MusicSpacePage: React.FC = () => {
             >
               <div className="flex items-center gap-6 p-6 rounded-xl bg-white/5 border border-white/10">
                 <img
-                  src={ARTIST.avatar}
-                  alt={ARTIST.nameZh}
+                  src={library.artist.avatar}
+                  alt={library.artist.nameZh}
                   className="w-24 h-24 rounded-full object-cover border-2 border-cyan-500/30"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://via.placeholder.com/96';
                   }}
                 />
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-white">{ARTIST.nameZh}</h2>
-                  <p className="text-white/50 text-sm">{ARTIST.name}</p>
-                  <p className="text-white/70 text-sm mt-2">{ARTIST.bio}</p>
+                  <h2 className="text-2xl font-bold text-white">{library.artist.nameZh}</h2>
+                  <p className="text-white/50 text-sm">{library.artist.name}</p>
+                  <p className="text-white/70 text-sm mt-2">{library.artist.bio}</p>
                   <div className="flex gap-4 mt-4">
                     <div className="text-center">
-                      <p className="text-xl font-bold text-cyan-400">{ALBUMS.length}</p>
+                      <p className="text-xl font-bold text-cyan-400">{library.albums.length}</p>
                       <p className="text-white/50 text-xs">专辑</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-xl font-bold text-cyan-400">{getAllSongs().length}</p>
+                      <p className="text-xl font-bold text-cyan-400">{library.songs.length}</p>
                       <p className="text-white/50 text-xs">歌曲</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-xl font-bold text-cyan-400">{VIDEOS.length}</p>
+                      <p className="text-xl font-bold text-cyan-400">{library.videos.length}</p>
                       <p className="text-white/50 text-xs">视频</p>
                     </div>
                   </div>
@@ -407,7 +413,7 @@ export const MusicSpacePage: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {PHOTOS.slice(0, 8).map((photo) => (
+                {library.photos.slice(0, 8).map((photo) => (
                   <div
                     key={photo.id}
                     className="aspect-square rounded-lg overflow-hidden border border-white/10"
@@ -430,7 +436,7 @@ export const MusicSpacePage: React.FC = () => {
                   <h3 className="text-white font-medium">音乐视频</h3>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {VIDEOS.map((video) => (
+                  {library.videos.map((video) => (
                     <div
                       key={video.id}
                       className="group relative aspect-video rounded-lg overflow-hidden border border-white/10 cursor-pointer"
@@ -450,7 +456,7 @@ export const MusicSpacePage: React.FC = () => {
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80">
                         <p className="text-white text-xs truncate">{video.titleZh}</p>
-                        <p className="text-white/50 text-xs">{video.year}</p>
+                        <p className="text-white/50 text-xs">{video.year > 0 ? video.year : ''}</p>
                       </div>
                     </div>
                   ))}

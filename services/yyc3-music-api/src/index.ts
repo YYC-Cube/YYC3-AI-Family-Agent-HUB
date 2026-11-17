@@ -24,7 +24,7 @@ import { closePools, createPools } from "./db/pool";
 async function main(): Promise<void> {
   const config = loadConfig();
   const pools = createPools(config);
-  const app = buildApp(pools);
+  const app = buildApp(pools, { corsOrigins: config.corsOrigins });
 
   try {
     await app.listen({ port: config.port, host: config.host });
