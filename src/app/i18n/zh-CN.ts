@@ -90,6 +90,7 @@ const zhCN = {
     videoDrama: "视频漫剧",
     voiceOfYanyu: "言语之声",
     planning: "规划中",
+    ready: "已就绪",
     sdkChat: "SDK 对话",
     exportCenter: "数据备份",
     hostFiles: "宿主机文件",

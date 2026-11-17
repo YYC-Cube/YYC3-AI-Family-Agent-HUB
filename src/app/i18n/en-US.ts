@@ -92,6 +92,7 @@ const enUS: TranslationKeys = {
     videoDrama: "Video Drama",
     voiceOfYanyu: "Voice of Yanyu",
     planning: "Planned",
+    ready: "Ready",
     sdkChat: "SDK Chat",
     exportCenter: "Data Backup",
     hostFiles: "Host Files",

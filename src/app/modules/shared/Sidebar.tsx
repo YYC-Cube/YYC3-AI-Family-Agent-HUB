@@ -65,6 +65,8 @@ interface NavChild {
   icon: React.ElementType;
   /** 规划中页面：条目显示「规划中」徽标（落档 49） */
   planned?: boolean;
+  /** 域包就绪页面：条目显示「已就绪」徽标（B13 迁移 Phase 0） */
+  ready?: boolean;
 }
 
 interface NavCategory {
@@ -128,14 +130,14 @@ const NAV_CATEGORIES: NavCategory[] = [
     icon: Building2,
     children: [
       { key: "nav.hotelDashboard", path: "/hotel", icon: Building2 },
-      { key: "nav.knowledgeHub", path: "/knowledge-hub", icon: BookOpen, planned: true },
-      { key: "nav.smartEducation", path: "/smart-education", icon: GraduationCap, planned: true },
-      { key: "nav.restaurantMgmt", path: "/restaurant", icon: UtensilsCrossed, planned: true },
-      { key: "nav.ecommerce", path: "/ecommerce", icon: ShoppingCart, planned: true },
-      { key: "nav.medicalCompliance", path: "/medical", icon: Stethoscope, planned: true },
-      { key: "nav.contentMarketing", path: "/content-marketing", icon: Megaphone, planned: true },
-      { key: "nav.videoDrama", path: "/video-drama", icon: Film, planned: true },
-      { key: "nav.voiceOfYanyu", path: "/voice", icon: Mic, planned: true },
+      { key: "nav.knowledgeHub", path: "/knowledge-hub", icon: BookOpen, ready: true },
+      { key: "nav.smartEducation", path: "/smart-education", icon: GraduationCap, ready: true },
+      { key: "nav.restaurantMgmt", path: "/restaurant", icon: UtensilsCrossed, ready: true },
+      { key: "nav.ecommerce", path: "/ecommerce", icon: ShoppingCart, ready: true },
+      { key: "nav.medicalCompliance", path: "/medical", icon: Stethoscope, ready: true },
+      { key: "nav.contentMarketing", path: "/content-marketing", icon: Megaphone, ready: true },
+      { key: "nav.videoDrama", path: "/video-drama", icon: Film, ready: true },
+      { key: "nav.voiceOfYanyu", path: "/voice", icon: Mic, ready: true },
       { key: "nav.commStation", path: "/comm-station", icon: Radio },
     ],
   },
@@ -343,6 +345,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                               {t("nav.planning")}
                             </span>
                           )}
+                          {child.ready && (
+                            <span className="shrink-0 px-1 rounded bg-[rgba(0,255,170,0.1)] border border-[rgba(0,255,170,0.2)] text-[rgba(0,255,170,0.75)]"
+                              style={{ fontSize: "0.5rem" }} title={t("nav.ready")}>
+                              {t("nav.ready")}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -404,6 +412,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                               {child.planned && (
                                 <span className="ml-1 px-1 rounded bg-[rgba(255,221,0,0.1)] text-[rgba(255,221,0,0.65)]" style={{ fontSize: "0.45rem" }}>
                                   {t("nav.planning")}
+                                </span>
+                              )}
+                              {child.ready && (
+                                <span className="ml-1 px-1 rounded bg-[rgba(0,255,170,0.1)] text-[rgba(0,255,170,0.75)]" style={{ fontSize: "0.45rem" }}>
+                                  {t("nav.ready")}
                                 </span>
                               )}
                             </button>

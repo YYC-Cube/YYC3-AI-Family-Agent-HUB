@@ -146,7 +146,7 @@ const UnifiedSettingsPanel = lazy(() =>
 const HotelDashboard = lazy(() =>
   import("./modules/business/HotelDashboard").then((m) => ({ default: m.HotelDashboard })),
 );
-import { PlannedModulePage } from "./modules/shared/PlannedModulePage";
+import { DomainWorkspacePage } from "./modules/shared/DomainWorkspacePage";
 
 const CommStationPanel = lazy(() =>
   import("./modules/business/CommStationPanel").then((m) => ({ default: m.CommStationPanel })),
@@ -200,39 +200,15 @@ export const router = createHashRouter([
       { path: "hotel-dashboard", Component: withSuspense(HotelDashboard) },
       { path: "hotel", Component: withSuspense(HotelDashboard) },
       { path: "comm-station", Component: withSuspense(CommStationPanel) },
-      /* 业务空间 · 规划中模块（落档 49）——统一占位页，零模拟数据 */
-      { path: "knowledge-hub", Component: () => <PlannedModulePage
-          title="知识中枢"
-          summary="企业知识资产的统一沉淀与检索中枢：文档、经验、SOP 的聚合与语义检索。"
-          roadmap={["知识库分层与权限模型", "向量检索与引用溯源", "与模型网关联动（RAG 问答）", "知识贡献度与运营看板"]} /> },
-      { path: "smart-education", Component: () => <PlannedModulePage
-          title="智能教育"
-          summary="面向培训与教学场景的智能助教：课程生成、练习批改与学习路径规划。"
-          roadmap={["课程与题库建模", "智能出题与批改", "学习路径推荐", "教学效果评估"]} /> },
-      { path: "restaurant", Component: () => <PlannedModulePage
-          title="餐饮管理"
-          summary="餐饮门店运营：菜单、库存、排班与经营分析的数字化管理。"
-          roadmap={["菜单与成本卡", "库存预警与采购建议", "排班与人力优化", "门店经营看板"]} /> },
-      { path: "ecommerce", Component: () => <PlannedModulePage
-          title="电商协同"
-          summary="多渠道电商协同：商品、订单、库存与客服的统一编排。"
-          roadmap={["多渠道商品同步", "订单履约编排", "库存共享与调拨", "客服话术与售后协同"]} /> },
-      { path: "medical", Component: () => <PlannedModulePage
-          title="医疗合规"
-          summary="医疗数据的合规治理：分级授权、脱敏审计与合规检查清单。"
-          roadmap={["数据分级与授权矩阵", "脱敏与访问审计", "合规检查清单", "事件上报与追溯"]} /> },
-      { path: "content-marketing", Component: () => <PlannedModulePage
-          title="内容营销"
-          summary="内容生产与投放协同：选题、创作、分发与效果归因。"
-          roadmap={["选题库与创作工作台", "多平台分发", "投放效果归因", "A/B 与素材迭代"]} /> },
-      { path: "video-drama", Component: () => <PlannedModulePage
-          title="视频漫剧"
-          summary="AI 视频漫剧生产流水线：剧本、分镜、生成与成片管理。"
-          roadmap={["剧本与分镜结构化", "文生图/图生视频流水线", "配音与字幕", "成片审核与版本管理"]} /> },
-      { path: "voice", Component: () => <PlannedModulePage
-          title="言语之声"
-          summary="语音能力中枢：音色库、语音合成与语音交互编排。"
-          roadmap={["音色库与克隆", "TTS/ASR 服务接入", "语音交互编排", "多语言与情感表达"]} /> },
+      /* 业务空间 · 域包工作区（B13 迁移 Phase 0）——真实域包数据驱动，零模拟 */
+      { path: "knowledge-hub", Component: () => <DomainWorkspacePage domainId="knowledge-hub" /> },
+      { path: "smart-education", Component: () => <DomainWorkspacePage domainId="education-content" /> },
+      { path: "restaurant", Component: () => <DomainWorkspacePage domainId="restaurant-ops" /> },
+      { path: "ecommerce", Component: () => <DomainWorkspacePage domainId="ecommerce-ops" /> },
+      { path: "medical", Component: () => <DomainWorkspacePage domainId="healthcare-compliance" /> },
+      { path: "content-marketing", Component: () => <DomainWorkspacePage domainId="content-marketing" /> },
+      { path: "video-drama", Component: () => <DomainWorkspacePage domainId="video-drama" /> },
+      { path: "voice", Component: () => <DomainWorkspacePage domainId="music-production" /> },
       { path: "sdk-chat", Component: withSuspense(SDKChatPanel) },
       { path: "export-center", Component: withSuspense(ConfigExportCenter) },
       { path: "*", Component: NotFound },
