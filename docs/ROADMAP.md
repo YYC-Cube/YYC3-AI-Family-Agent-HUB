@@ -95,6 +95,21 @@ scope: governance
 | 方案 | salt 改品牌值 + 存量密文迁移（旧 salt 解密 → 新 salt 重加密的一次性 migration），或接受用户重新保存配置 |
 | 工作量 | 0.5 天 |
 
+### P1-4 · 治理总仓（YYC3-AI-Family-Agent）权威源统一
+
+> 2026-11-20 基于 session_2c75f186 / session_516cca80 两会话衔接分析立项。
+
+| 项 | 内容 |
+| ---- | ---- |
+| 定位 | 该仓是 AI Family 体系的**上级治理总仓**（OPS 运维总纲 · 三轨许可证族 · 全端台账 · 企业管理蓝图），与本应用仓是上位/姊妹关系，非文档子集 |
+| 现状 | **本机四副本三 HEAD**：① 主库 `docs/YYC3-AI-Family-Agent`（e8a93c8 最新"文档归仓"，无 remote，196MB 实体被误入索引后已移除）② `personal/YYC3-AI-FAmily-Agent`（2b6930a，remote→`YYC-Cube/YYC3-AI-Family-Agents`）③ `YANYUCLOUDCUBE/YYC3-AI-Family-Agent`（e8a93c8，无 remote）④ `personal/YYC3-Family-AI-Agents`（41501e1，remote→`YYC-Cube/YYC3-Family-AI-Agents` 复数仓）——**GitHub 远端也双轨** |
+| 方案 | ① 裁定唯一权威工作副本（建议 `personal/YYC3-AI-FAmily-Agent`，remote 已通）并把最新提交 e8a93c8 推上远端；② GitHub 双轨裁定（`YYC3-Family-AI-Agents` 复数仓归档/重定向）；③ 主库 `docs/` 下 196MB 实体移除，替换为 `GOVERNANCE-POINTER.md` 指针文档（沿用该仓 OPS.md 自身的"权威源指针"纪律）；④ 确需版本化引用时再 `git submodule add` pin commit |
+| 工作量 | 0.5 天（①②③）/ submodule 版另加 0.5 天 |
+
+### P1-2 追注 · music-api 鉴权边界（2026-11-20 审计联动）
+
+Mimosa 审计（scan-…-adcb18cbdeb6）将 `DELETE /api/music/favorites|songs` 判为"敏感操作无角色/权限约束"（MEDIUM·candidate）。这是**已知设计边界**而非漏洞：家用单用户威胁模型下 3030 仅 LAN/Tailscale 可达；P1-2 多用户项落地时必须同步引入鉴权（最简单：`X-Family-Key` 头比对 env 密钥），若未来开公网则升格为 P0。
+
 ### P3 · 运维清理（随手项）
 
 - NAS 主库 `yyc3_music_test`（7.6MB）为早期手工验证残留，确认无引用后 `drop database`
