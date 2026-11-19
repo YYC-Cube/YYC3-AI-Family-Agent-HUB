@@ -3,7 +3,7 @@ file: ROADMAP.md
 title: YYC3 AI Family HUB — 路线图与立项规划
 description: 全域差距分析后的立项清单 — 命名双轨 / 音乐二期 / NAS CD / LFS 治理 / 生产基址
 author: YYC3 Team <admin@0379.email>
-version: v1.0.0
+version: v1.0.1
 created: 2026-11-20
 updated: 2026-11-20
 status: active
@@ -132,6 +132,7 @@ Mimosa 审计（scan-…-adcb18cbdeb6）将 `DELETE /api/music/favorites|songs` 
 
 | 版本 | 日期 | 变更内容 | 作者 |
 | ---- | ---- | -------- | ---- |
+| v1.0.1 | 2026-11-20 | 增补 P1-4 治理总仓权威源统一 · P1-2 鉴权边界追注（Mimosa 审计联动） | YYC3 Team |
 | v1.0.0 | 2026-11-20 | 初版：全域差距分析立项（P1×3 / P2×3 / P3×1）+ 已闭环存档 | YYC3 Team |
 
 ---
