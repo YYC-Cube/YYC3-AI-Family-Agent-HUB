@@ -31,3 +31,6 @@ yyc3-cn-assistant.json
 
 # 用户个人参照截图（82M，个人资产不入库）
 public/项目导航-对齐截图/
+
+# 本地嵌入仓库（用户自建/clone，不入索引；物理目录保留）
+docs/YYC3-AI-Family-Agent/
