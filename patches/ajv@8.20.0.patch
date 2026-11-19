@@ -1,0 +1,44 @@
+diff --git a/dist/runtime/uri.js b/dist/runtime/uri.js
+index bbd2f05244d65c1f0e5bfe0f2dc2a71ab2348a9c..a9e6b89c5b13386baeff4a8278cabd5f60b58488 100644
+--- a/dist/runtime/uri.js
++++ b/dist/runtime/uri.js
+@@ -1,6 +1,39 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const uri = require("fast-uri");
++// YYC³ 补丁（ajv 8.20.0）：
++// fast-uri >= 3.1.9 修复了 URI 校验漏洞，但对畸形引用（scheme 含百分号编码、首尾控制字符等）
++// 会更严格：parse() 以 error 字段返回，serialize()/resolve() 直接抛错。
++// ajv 在编译 schema 时经 uriResolver 的 parse/serialize/resolve 解析 $id/$ref，
++// 一旦 schema 来自外部不可信来源，编译期就会中断并抛出底层 URI 错误。
++// 此处将 serialize/resolve 降级为“失败即按原值返回”，使编译不中断；
++// 不降级 fast-uri 版本、不放宽 parse 的 error 字段，安全修复仍然生效。
++const _resolve = uri.resolve;
++uri.resolve = function resolve(...args) {
++    try {
++        return _resolve.apply(this, args);
++    }
++    catch {
++        const ref = args[1];
++        return typeof ref === "string" ? ref : args[0];
++    }
++};
++const _serialize = uri.serialize;
++uri.serialize = function serialize(...args) {
++    try {
++        return _serialize.apply(this, args);
++    }
++    catch {
++        const p = args[0];
++        if (!p || typeof p !== "object") {
++            return "";
++        }
++        if (p.scheme) {
++            return `${p.scheme}:${p.path ?? ""}`;
++        }
++        return String(p.path ?? "");
++    }
++};
+ uri.code = 'require("ajv/dist/runtime/uri").default';
+ exports.default = uri;
+ //# sourceMappingURL=uri.js.map

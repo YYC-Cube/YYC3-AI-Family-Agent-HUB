@@ -1,62 +1,62 @@
 packages:
-  - "."
-  - "services/*"
+  - .
+  - services/*
+
 allowBuilds:
   electron: true
   electron-winstaller: true
   esbuild: true
-# pnpm 10 兼容字段（pnpm 11 起改读 allowBuilds；本机 10.17 仅识别本字段，
-# 缺失时 electron postinstall 被静默跳过 → Electron 二进制不落盘）
+
 onlyBuiltDependencies:
   - electron
   - esbuild
   - electron-winstaller
+
 overrides:
-  # set-cookie-parser 曾钉 3.2.2（3.2.3 处于 CI pnpm11 minimumReleaseAge 冷却期被拒收），
-  # 2026-11-20 冷却期已过解钉恢复 ^3.x 自然解析
-  # @electron/rebuild@3.7.2 上游以 git+ssh 形式声明 @electron/node-gyp，
-  # pnpm 11 再生成锁文件时改走 SSH clone，CI（无 SSH 密钥）安装失败。
-  # 钉回同 commit 的 codeload tarball（匿名 HTTPS 可达），与历史锁文件等价。
-  "@electron/node-gyp": "https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2"
+  '@electron/node-gyp': https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2
+  '@tootallnate/once@<3.0.1': '>=3.0.1'
+  '@xmldom/xmldom@<0.9.12': '>=0.9.12'
+  baseline-browser-mapping@<2.11.0: '>=2.11.0'
+  basic-ftp: '>=6.2.4'
+  brace-expansion@<1.1.13: '>=1.1.13'
+  brace-expansion@>=4.0.0 <5.0.5: '>=5.0.5'
+  browserslist@<4.28.7: '>=4.28.7'
+  builder-util-runtime@<9.7.0: '>=9.7.0'
+  compression: '>=1.8.2'
+  # ajv 8.20 声明 fast-uri ^3.0.1；4.x 严格化 resolve()/serialize()（畸形 URI 直接抛错），
+  # 故只升到补丁修复版 3.1.9，不跨大版本
+  fast-uri@>=3.0.0 <3.1.9: ^3.1.9
+  flatted@<3.4.0: '>=3.4.0'
+  flatted@<=3.4.1: '>=3.4.2'
+  follow-redirects@<1.16.2: '>=1.16.2'
+  form-data@<4.0.6: '>=4.0.6'
+  http-cache-semantics: '>=4.2.1'
+  js-yaml@>=4.0.0 <4.3.2: '>=4.3.2'
   lodash: ^4.18.0
   lodash-es: ^4.18.0
-  "@tootallnate/once@<3.0.1": ">=3.0.1"
-  brace-expansion@<1.1.13: ">=1.1.13"
-  brace-expansion@>=4.0.0 <5.0.5: ">=5.0.5"
-  flatted@<3.4.0: ">=3.4.0"
-  flatted@<=3.4.1: ">=3.4.2"
-  picomatch@>=4.0.0 <4.0.4: ">=4.0.4"
-  tar@<7.5.7: ">=7.5.7"
-  tar@<7.5.8: ">=7.5.8"
-  tar@<=7.5.10: ">=7.5.11"
-  tar@<=7.5.2: ">=7.5.3"
-  tar@<=7.5.3: ">=7.5.4"
-  tar@<=7.5.9: ">=7.5.10"
-  tmp@<=0.2.3: ">=0.2.4"
-  undici: ">=7.30.1 <8"
-  yaml@>=1.0.0 <1.10.3: ">=1.10.3"
-  "@xmldom/xmldom@<0.9.12": ">=0.9.12"
-  # plist@3.1.0（electron-builder 依赖）调用 parseFromString 不传 mimeType，
-  # xmldom 0.9 收紧后抛错（P5 实测 DOMParser mimeType undefined）→ 作用域钉回 0.8
-  "plist>@xmldom/xmldom": "0.8.15"
-  tar@<=7.5.21: ">=7.5.22"
-  react-router@<7.18.2: ">=7.18.2"
-  js-yaml@>=4.0.0 <4.3.2: ">=4.3.2"
-  qs@<6.16.1: ">=6.16.1"
-  shell-quote: ">=1.11.0"
-  browserslist@<4.28.7: ">=4.28.7"
-  form-data@<4.0.6: ">=4.0.6"
-  baseline-browser-mapping@<2.11.0: ">=2.11.0"
-  tmp@<=0.2.5: ">=0.2.6"
-  uuid@<11.1.1: ">=11.1.1"
-  builder-util-runtime@<9.7.0: ">=9.7.0"
-  proxy-addr: ">=2.0.8"
-  compression: ">=1.8.2"
-  basic-ftp: ">=6.2.4"
-  follow-redirects@<1.16.2: ">=1.16.2"
-  # ajv 8.20 声明 fast-uri ^3.0.1；4.x 已严格化 resolve()（畸形/空 host/首尾空格直接抛错），
-  # 故只升到补丁修复版 3.1.9，不跨大版本
-  fast-uri@>=3.0.0 <3.1.9: "^3.1.9"
-  minimatch@>=7.0.0 <11.0.1: ">=11.0.1"
-  http-cache-semantics: ">=4.2.1"
-  source-map-js: ">=1.2.2"
+  minimatch@>=7.0.0 <11.0.1: '>=11.0.1'
+  picomatch@>=4.0.0 <4.0.4: '>=4.0.4'
+  plist>@xmldom/xmldom: 0.8.15
+  proxy-addr: '>=2.0.8'
+  qs@<6.16.1: '>=6.16.1'
+  react-router@<7.18.2: '>=7.18.2'
+  shell-quote: '>=1.11.0'
+  source-map-js: '>=1.2.2'
+  tar@<7.5.7: '>=7.5.7'
+  tar@<7.5.8: '>=7.5.8'
+  tar@<=7.5.10: '>=7.5.11'
+  tar@<=7.5.2: '>=7.5.3'
+  tar@<=7.5.21: '>=7.5.22'
+  tar@<=7.5.3: '>=7.5.4'
+  tar@<=7.5.9: '>=7.5.10'
+  tmp@<=0.2.3: '>=0.2.4'
+  tmp@<=0.2.5: '>=0.2.6'
+  undici: '>=7.30.1 <8'
+  uuid@<11.1.1: '>=11.1.1'
+  yaml@>=1.0.0 <1.10.3: '>=1.10.3'
+
+# ajv 补丁：patches/ajv@8.20.0.patch
+# fast-uri 3.1.9 对畸形 URI 的 serialize()/resolve() 会抛错，ajv 编译外部不可信 schema 时会被中断；
+# 补丁将二者降级为“失败即按原值返回”，不降低 fast-uri 版本、不放宽其安全修复。
+patchedDependencies:
+  ajv@8.20.0: patches/ajv@8.20.0.patch
