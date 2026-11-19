@@ -54,7 +54,9 @@ overrides:
   compression: ">=1.8.2"
   basic-ftp: ">=6.2.4"
   follow-redirects@<1.16.2: ">=1.16.2"
-  fast-uri@>=3.0.0 <3.1.9: ">=3.1.9"
+  # ajv 8.20 声明 fast-uri ^3.0.1；4.x 已严格化 resolve()（畸形/空 host/首尾空格直接抛错），
+  # 故只升到补丁修复版 3.1.9，不跨大版本
+  fast-uri@>=3.0.0 <3.1.9: "^3.1.9"
   minimatch@>=7.0.0 <11.0.1: ">=11.0.1"
   http-cache-semantics: ">=4.2.1"
   source-map-js: ">=1.2.2"
