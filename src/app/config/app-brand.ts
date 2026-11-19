@@ -17,7 +17,7 @@
  * @status: active
  * @tags: [config],[brand],[ssot]
  *
- * @brief: YYC3-AI-Family-HUB 品牌常量（分离自母项目 YYC3 CloudPivot Matrix Ops 运维面板）
+ * @brief: YYC3-AI-Family-HUB 品牌常量（2026-11-17 自母项目运维面板分离独立）
  *
  * @details:
  * - 中文主名：言语云枢·AI Family 智枢 / 品牌英文名：YYC3 AI Family HUB

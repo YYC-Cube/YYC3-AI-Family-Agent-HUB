@@ -1389,10 +1389,10 @@ const zhCN = {
   // ======== 404 页面 ========
   notFound: {
     title: "页面未找到",
-    desc: "请求的路径在言语云枢·智能矩阵中不存在。",
+    desc: "请求的路径在言语云枢·AI Family 智枢中不存在。",
     goBack: "返回上页",
     goHome: "返回首页",
-    footer: "言语云枢·智能矩阵 · 404 NOT_FOUND",
+    footer: "言语云枢·AI Family 智枢 · 404 NOT_FOUND",
   },
 } as const;
 

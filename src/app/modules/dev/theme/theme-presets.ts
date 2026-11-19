@@ -335,7 +335,7 @@ export interface BrandingConfig {
 }
 
 export const DEFAULT_BRANDING: BrandingConfig = {
-  systemName: "言语云枢·智能矩阵",
-  tagline: "万源汇枢，阵驭算力",
+  systemName: "言语云枢·AI Family 智枢",
+  tagline: "八魂归一，云枢乃成",
   backgroundUrl: "",
 };

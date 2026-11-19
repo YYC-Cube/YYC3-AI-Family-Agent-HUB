@@ -26,6 +26,9 @@
 // 常量
 // ============================================================
 
+// ⚠️ SALT 参与 PBKDF2 密钥派生——字符串含母项目历史品牌词，但改动将使
+// 已持久化的密文（localStorage）无法解密。品牌化改造需带迁移方案（见 ROADMAP），
+// 此处保持原值；CI 品牌守卫对本文件豁免。
 const SALT = new TextEncoder().encode("YYC3-CloudIntelli-Matrix-vault-salt-2026");
 const KEY_USAGE: KeyUsage[] = ["encrypt", "decrypt"];
 

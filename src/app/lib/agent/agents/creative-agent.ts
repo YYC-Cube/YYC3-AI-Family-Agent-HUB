@@ -36,7 +36,7 @@ export class CreativeAgent extends AIAgent {
         {
           id: `${task.id}-design`,
           toolName: "design_suggest",
-          args: { elementType: task.description, context: "YYC³ 智能矩阵" },
+          args: { elementType: task.description, context: "YYC³ AI Family 智枢" },
           status: "pending",
           assigneeId: this.agentId,
         },

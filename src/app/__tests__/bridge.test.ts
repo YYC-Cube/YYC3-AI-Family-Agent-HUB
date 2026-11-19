@@ -206,7 +206,7 @@ describe("桥接层测试", () => {
 
     it("应该能够获取应用配置", async () => {
       const mockConfig = {
-        name: "YYC3-CloudPivot-Matrix-Ops",
+        name: "YYC3-AI-Family-HUB",
         version: "1.0.0",
         locale: "zh-CN",
         isPackaged: false,

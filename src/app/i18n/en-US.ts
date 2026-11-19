@@ -1380,10 +1380,10 @@ const enUS: TranslationKeys = {
   // ======== 404 Page ========
   notFound: {
     title: "Page Not Found",
-    desc: "The requested path does not exist in CloudPivot Matrix Ops.",
+    desc: "The requested path does not exist in YYC³ AI Family HUB.",
     goBack: "Go Back",
     goHome: "Go Home",
-    footer: "CloudPivot Matrix Ops · 404 NOT_FOUND",
+    footer: "YYC³ AI Family HUB · 404 NOT_FOUND",
   },
 } as const;
 

@@ -1,7 +1,7 @@
 /**
  * AIAssistant.tsx
  * =================================
- * YYC³ CloudPivot Intelli-Matrix · AI 集成控制中心
+ * YYC³ AI Family HUB · AI 集成控制中心
  *
  * 重构版本 - 采用模块化架构
  * - 使用 Radix UI 组件替换内联实现

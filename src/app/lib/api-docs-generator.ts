@@ -259,8 +259,8 @@ export class APIDocsGenerator {
 export function createYYC3APIDocs(): APIDocsGenerator {
   const generator = new APIDocsGenerator({
     version: "1.0.0",
-    title: "YYC³ CloudPivot Matrix Ops API",
-    description: "言语云枢·智能矩阵（YYC³ CloudPivot Matrix Ops）异构算力矩阵运维面板 API 文档",
+    title: "YYC³ AI Family HUB API",
+    description: "言语云枢·AI Family 智枢（YYC³ AI Family HUB）家族智能中枢 API 文档",
     baseUrl: "http://localhost:3118/api",
   });
 

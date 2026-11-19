@@ -67,13 +67,15 @@ jobs:
         run: |
           grep -q "<title>言语云枢·AI Family 智枢</title>" index.html \
             || { echo "❌ 页签 Title 不合规"; exit 1; }
-          if grep -rnE "(^|[^A-Za-z0-9_])CloudPivot-Matrix([^A-Za-z0-9_]|$)|PivotMatrix|Cloud Intelli-Matrix" \
+          # 品牌残留 pattern 覆盖连字符/空格/驼峰/中文四种变体（2026-11-20 补空格与中文漏检）
+          if grep -rnE "CloudPivot[- ]?Matrix|PivotMatrix|Cloud ?Intelli-Matrix|智能矩阵" \
                --include="*.ts" --include="*.tsx" --include="*.html" --include="*.json" \
                --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=dist-electron \
                --exclude-dir=coverage --exclude-dir=test-results --exclude-dir=docs \
                --exclude="*.test.ts" --exclude="*.test.tsx" \
-               --exclude=settings-ssot-slice.ts . ; then
-            echo "❌ 检测到母项目品牌残留（CloudPivot-Matrix / PivotMatrix）"; exit 1
+               --exclude=settings-ssot-slice.ts \
+               --exclude=crypto-vault.ts . ; then
+            echo "❌ 检测到母项目品牌残留（CloudPivot-Matrix / 智能矩阵 等变体）"; exit 1
           fi
           domain="$(tr -d '[:space:]' < public/CNAME)"
           grep -q "domain: \"$domain\"" src/app/config/app-brand.ts \

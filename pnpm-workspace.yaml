@@ -12,9 +12,8 @@ onlyBuiltDependencies:
   - esbuild
   - electron-winstaller
 overrides:
-  # set-cookie-parser@3.2.3 发布于 2026-11-16，处于 CI pnpm11 minimumReleaseAge
-  # 供应链冷却期内被拒收；钉回 3.2.2 保证 frozen-lockfile 安装通过（冷却期满可解钉）
-  set-cookie-parser: 3.2.2
+  # set-cookie-parser 曾钉 3.2.2（3.2.3 处于 CI pnpm11 minimumReleaseAge 冷却期被拒收），
+  # 2026-11-20 冷却期已过解钉恢复 ^3.x 自然解析
   # @electron/rebuild@3.7.2 上游以 git+ssh 形式声明 @electron/node-gyp，
   # pnpm 11 再生成锁文件时改走 SSH clone，CI（无 SSH 密钥）安装失败。
   # 钉回同 commit 的 codeload tarball（匿名 HTTPS 可达），与历史锁文件等价。

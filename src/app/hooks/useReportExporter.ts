@@ -172,7 +172,7 @@ function exportPrintable(data: ReportData) {
   </style>
 </head>
 <body>
-  <h1>言语云枢·智能矩阵 — ${data.title}</h1>
+  <h1>言语云枢·AI Family 智枢 — ${data.title}</h1>
   <div class="subtitle">
     报告时间: ${new Date(data.generatedAt).toLocaleString("zh-CN")} &nbsp;|&nbsp;
     时间范围: ${data.timeRange.label} &nbsp;|&nbsp;
@@ -208,7 +208,7 @@ function exportPrintable(data: ReportData) {
   ${data.recommendations.map((r) => `<div class="recommendation">${r}</div>`).join("")}
 
   <div class="footer">
-    YYC³ CloudPivot Matrix Ops — 自动生成报告 — ${new Date().toISOString().slice(0, 10)}
+    YYC³ AI Family HUB — 自动生成报告 — ${new Date().toISOString().slice(0, 10)}
   </div>
 
   <div class="no-print" style="text-align:center;margin-top:24px;">

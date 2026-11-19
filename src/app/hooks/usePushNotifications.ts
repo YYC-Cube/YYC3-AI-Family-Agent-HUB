@@ -71,10 +71,10 @@ export function usePushNotifications() {
   const sendAlert = useCallback(
     (level: AlertLevel, message: string, detail?: string) => {
       const titles: Record<AlertLevel, string> = {
-        info: "智能矩阵 信息",
-        warning: "智能矩阵 告警",
-        error: "智能矩阵 错误",
-        critical: "智能矩阵 严重告警",
+        info: "AI Family 智枢 信息",
+        warning: "AI Family 智枢 告警",
+        error: "AI Family 智枢 错误",
+        critical: "AI Family 智枢 严重告警",
       };
 
       return showNotification(titles[level], {

@@ -145,7 +145,7 @@ describe("usePushNotifications", () => {
 
       expect(mockShow).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: "智能矩阵 信息",
+          title: "AI Family 智枢 信息",
           body: "Test Message\nTest Detail",
           tag: "cpim-alert-info",
         }),
@@ -162,7 +162,7 @@ describe("usePushNotifications", () => {
 
       expect(mockShow).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: "智能矩阵 错误",
+          title: "AI Family 智枢 错误",
           requireInteraction: true,
         }),
       );
@@ -178,7 +178,7 @@ describe("usePushNotifications", () => {
 
       expect(mockShow).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: "智能矩阵 严重告警",
+          title: "AI Family 智枢 严重告警",
           requireInteraction: true,
         }),
       );
@@ -194,7 +194,7 @@ describe("usePushNotifications", () => {
 
       expect(mockShow).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: "智能矩阵 告警",
+          title: "AI Family 智枢 告警",
           body: "Test Warning",
         }),
       );

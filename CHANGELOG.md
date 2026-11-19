@@ -27,6 +27,34 @@ language: zh-CN
 
 ---
 
+## [1.1.0] - 2026-11-20
+
+### Added
+
+- 🎵 yyc3-music-api 服务端（services/yyc3-music-api）：Fastify + PostgreSQL 17 主备双库（NAS 主 / 本机热备只读降级），曲库 CRUD · 收藏 · 播放历史 · 心情场景推荐；NAS Docker 常驻（host 网络 3030），CORS 白名单 + X-Family 家族注入头
+- 🎵 音乐空间前端接入真实曲库（27 曲 · 5 专辑 · 7 MV）：MusicApiClient / MusicLibrary（API 优先、离线回退内置曲库），播放上报与收藏双向同步
+- 🎨 设计系统页新增「令牌库 Live」：theme.css 单一真源 computed 实时可视化（九类令牌分组）
+- 🎨 主题定制页补全：编辑实时 setProperty 到 :root（原只存不应用）；新增品牌双语义编辑区
+- 📐 设计令牌规范文档（docs/标规体系/YYC3-AI-FAmily-Agent-设计系统-令牌规范.md）
+- 🗺️ ROADMAP 立项规划（docs/ROADMAP.md）：命名双轨统一 / 音乐二期 / NAS CD / LFS 治理 / 生产基址
+
+### Changed
+
+- 🧭 导航信息架构重构：裁撤 开发指南 / 重构分析 / 架构审计 三页；终端更名「Family终端」连同 设计系统 / 主题定制 归入 AI Family 类目；开发工具类目移除（Sidebar + BottomNav + TopBar + CommandPalette + useTerminal 五入口全量同步）
+- 🧹 品牌双语义单源裁定（全域审计闭环）：辉光青 `--color-brand-glow` / 渐变紫 `--color-brand-purple` / 周末色 `--color-weekend` 收拢全站硬编码；时钟盘 31 处、渐变 17 处清零
+- 🧹 母项目品牌残留清零：404 文案 / Mock 助手自述 / 文档与报告生成器 / ErrorBoundary / 配置导出源 / 注释（11 处）；CI 品牌守卫 pattern 补空格变体（`CloudPivot Matrix`）
+- 🖼️ 表盘中心圆升级：AI 浮窗纯 logo 映射入圆（点击/键盘唤起 AI 助手），品牌行合并「YYC³ AI Family」下移，Orbitron 字族 + 64.png 防糊
+- ⬆️ 依赖：Dependabot 批量合并（vite 8.1 / electron 45 / zod 4.6 等）；set-cookie-parser 供应链冷却期解钉
+
+### Fixed
+
+- 🐛 Pages 部署过期竞态：gate 守卫仅放行 main 最新 head（防旧 CI 后完成覆盖新版本）
+- 🐛 CI 构建 LFS checkout：防 mp3/mp4 以指针文本入部署包
+- 🐛 useBigModelSDK 流式用例：2.7~7.2s 真实定时器 vs 固定 5s 上限的必然超时 → 假时钟确定性推进
+- 🐛 主题定制只存不应用；lockfile 两次与 package.json 失配（Dependabot 交叉合并）修复
+
+---
+
 ## [1.0.0] - 2026-11-17
 
 ### Added
