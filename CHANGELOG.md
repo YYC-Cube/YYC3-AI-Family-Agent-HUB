@@ -2,9 +2,9 @@
 file: CHANGELOG.md
 description: YYC3 AI Family HUB 版本更新日志 · 记录所有重要变更
 author: YanYuCloudCube Team <admin@0379.email>
-version: v1.0.0
+version: v1.1.0
 created: 2026-11-17
-updated: 2026-11-17
+updated: 2026-11-20
 status: stable
 tags: [changelog],[version],[release]
 category: general
@@ -52,6 +52,12 @@ language: zh-CN
 - 🐛 CI 构建 LFS checkout：防 mp3/mp4 以指针文本入部署包
 - 🐛 useBigModelSDK 流式用例：2.7~7.2s 真实定时器 vs 固定 5s 上限的必然超时 → 假时钟确定性推进
 - 🐛 主题定制只存不应用；lockfile 两次与 package.json 失配（Dependabot 交叉合并）修复
+
+### Security
+
+- 🔐 Dependabot 17 项告警清零：undici 7.30.2 / follow-redirects 1.16.3 / qs 6.17.1 / basic-ftp 6.2.6 / fast-uri 3.1.9（作用域收敛，不跨大版本）/ minimatch 11.0.8 / vitest 4.1.12
+- 🩹 `patches/ajv@8.20.0.patch`：ajv 的 URI `serialize()` / `resolve()` 失败降级为返回原值，消除外部畸形 `$id` 中断 schema 编译的边界（fast-uri 版本与安全修复不变）
+- 📄 SECURITY.md 增「漏洞收敛实践」基线：作用域 override → 声明合规核对 → 最小补丁 → 四项回归 + 告警复验
 
 ---
 

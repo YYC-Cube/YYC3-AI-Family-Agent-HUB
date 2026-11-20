@@ -2,9 +2,9 @@
 file: SECURITY.md
 description: YYC³ CloudPivot Matrix Ops · 安全策略与漏洞报告
 author: YanYuCloudCube Team
-version: 1.0.0
+version: 1.1.0
 created: 2026-02-27
-updated: 2026-02-27
+updated: 2026-11-20
 status: published
 tags: [security, vulnerability-reporting, best-practices]
 ---
@@ -148,7 +148,7 @@ if (!hasPermission(user, 'admin')) {
 # 检查依赖漏洞
 pnpm audit
 
-# 自动修复漏洞（谨慎使用）
+# 自动修复漏洞（仅用于查看建议，不直接提交；本仓以 overrides 收敛，见下节）
 pnpm audit fix
 
 # 更新依赖到最新版本
@@ -162,6 +162,54 @@ pnpm update
 | React | UI 框架 | [reactjs.org](https://reactjs.org/) |
 | Supabase | 后端服务 | [supabase.com](https://supabase.com/) |
 | Vite | 构建工具 | [vitejs.dev](https://vitejs.dev/) |
+
+#### 漏洞收敛实践（本仓基线 · 2026-11）
+
+依赖告警统一在 **`pnpm-workspace.yaml` 的 `overrides`** 中收敛，不改上游包的传递依赖声明。三条硬规则：
+
+**1. 作用域优先** —— 只覆盖受影响区间，保留其它大版本：
+
+```yaml
+fast-uri@>=3.0.0 <3.1.9: ^3.1.9            # 只动 3.x，已安全的 4.x 依赖方保持不动
+minimatch@>=7.0.0 <11.0.1: '>=11.0.1'      # 3.x / 5.x 不在影响区间，原样保留
+```
+
+**2. 版本声明合规** —— 升级前核对消费方 `package.json` 的声明范围，不得跨越其 semver 边界：
+
+> `ajv@8.20.0` 声明 `fast-uri: ^3.0.1` → 只能升到 3.1.9；
+> `@fastify/ajv-compiler@4.0.7` 声明 `^4.0.0` → 其 fast-uri 保持 4.2.3。
+> 两个版本在同一依赖树中共存是**预期状态**，不是重复安装故障。
+
+**3. 最小补丁兜底** —— 仅当"安全修复本身引入不可接受的运行时行为"才使用 `pnpm patch`，并在 `patchedDependencies` 登记。
+
+以 [`patches/ajv@8.20.0.patch`](./patches/ajv@8.20.0.patch) 为例：
+
+| 项 | 内容 |
+|---|---|
+| 现象 | `fast-uri` 3.1.9 修复 URI 校验漏洞后，`serialize()` / `resolve()` 对畸形 URI 直接抛错；ajv 编译 `$id` / `$ref` 时中断 |
+| 处置 | 仅将这两个方法降级为"失败即按原值返回"；**不降低 fast-uri 版本、不放宽其 `parse()` 的 `error` 字段** |
+| 效应 | 外部不可信 schema（含畸形 `$id`）可正常编译，安全修复仍然生效 |
+
+**收敛后必须回归**（四项缺一不可）：
+
+```bash
+pnpm type-check      # 类型
+pnpm lint            # 工具链（ts-eslint 链依赖 minimatch 等）
+pnpm test:ci         # 单元/集成测试
+pnpm build           # 构建（tsc + vite）
+```
+
+**告警复验**：
+
+```bash
+gh api "repos/YYC-Cube/YYC3-AI-Family-Agent-HUB/dependabot/alerts?state=open&per_page=100" --jq 'length'   # 期望 0
+```
+
+**维护提醒**
+
+- `patchedDependencies` 与包版本绑定：升级对应包后 pnpm 会提示补丁失配，需先确认上游是否已修复，再删除或重建补丁。
+- `pnpm patch-commit` 与部分安装流程会重写 `pnpm-workspace.yaml`，**中文注释可能被清除**；提交前检查 `overrides` 说明是否仍在。
+- 本仓不提交 `pnpm audit fix` 的自动改写结果：它会批量修改 `package.json` 版本范围，绕过上述合规核对。
 
 ---
 
