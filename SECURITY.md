@@ -2,7 +2,7 @@
 file: SECURITY.md
 description: YYC³ CloudPivot Matrix Ops · 安全策略与漏洞报告
 author: YanYuCloudCube Team
-version: 1.1.0
+version: 1.1.1
 created: 2026-02-27
 updated: 2026-11-20
 status: published
@@ -127,18 +127,15 @@ function validateEmail(email: string): boolean {
 
 #### 认证与授权
 
-```typescript
-// ✅ 使用 Supabase 的认证机制
-const { data: { user } } = await supabase.auth.signInWithPassword({
-  email,
-  password,
-});
+> 🚫 **禁止引入 BaaS 身份服务**（Supabase Auth / Firebase Auth 等）。本仓为本地闭环桌面应用，不向任何第三方回传身份数据。
 
-// ✅ 验证用户权限
-if (!hasPermission(user, 'admin')) {
-  throw new Error('Unauthorized');
-}
-```
+当前形态（`src/app/lib/mock-auth.ts` + `src/app/modules/shared/Login.tsx`）：
+
+- 认证为 **Ghost 语义**：一键进入本地会话，会话键为 `yyc3_session` / `yyc3_ghost`，纯 `localStorage`，零后端
+- 登录页的账密输入**仅作视觉引导，不做任何校验**
+- 生产构建下 Ghost 受 `VITE_ENABLE_GHOST_MODE` 构建开关门禁（**默认禁用**）
+- 客户端权限判断只用于 UI 与操作路径收敛，**不构成安全边界**；真实隔离依赖本地存储与操作系统文件权限
+- 若引入多用户能力，必须自建服务端签发短期令牌（Fastify + PostgreSQL），不得接 BaaS
 
 ### 依赖管理
 
@@ -160,8 +157,12 @@ pnpm update
 | 依赖 | 用途 | 来源 |
 |------|------|------|
 | React | UI 框架 | [reactjs.org](https://reactjs.org/) |
-| Supabase | 后端服务 | [supabase.com](https://supabase.com/) |
-| Vite | 构建工具 | [vitejs.dev](https://vitejs.dev/) |
+| Vite | 构建与开发服务器 | [vitejs.dev](https://vitejs.dev/) |
+| Electron | 桌面运行时 | [electronjs.org](https://www.electronjs.org/) |
+| Fastify | 服务端（`services/yyc3-music-api`） | [fastify.dev](https://fastify.dev/) |
+| PostgreSQL 17 | 主备数据存储（NAS 主库 / 本机热备） | [postgresql.org](https://www.postgresql.org/) |
+
+> 🚫 本仓**不使用** Supabase / Firebase 等 BaaS：无云数据库、云存储、云鉴权依赖。
 
 #### 漏洞收敛实践（本仓基线 · 2026-11）
 
@@ -217,27 +218,26 @@ gh api "repos/YYC-Cube/YYC3-AI-Family-Agent-HUB/dependabot/alerts?state=open&per
 
 ### Ghost Mode
 
-Ghost Mode 是一个开发便捷功能，仅用于开发环境：
+Ghost Mode 是一个本地便捷入口，实现位于 `src/app/lib/mock-auth.ts`：
 
 ```typescript
-// 检查是否在 Ghost Mode
-if (import.meta.env.VITE_GHOST_MODE === 'true') {
-  // 跳过 Supabase 认证
-  // 使用本地数据
+// 构建期开关：生产构建默认关闭，需显式置 true 才放行
+if (import.meta.env.VITE_ENABLE_GHOST_MODE === 'true') {
+  // 一键创建 admin 级本地会话（无后端鉴权）
 }
 ```
 
 **重要**：
-- ⚠️ Ghost Mode 不应在生产环境使用
-- ⚠️ Ghost Mode 的所有数据仅存储在 localStorage
-- ⚠️ 生产部署时必须禁用 Ghost Mode
+- ⚠️ 生产构建下默认禁用（`ghostBuildEnabled()` 在 `PROD` 且开关未显式开启时返回 false）
+- ⚠️ Ghost Mode 的会话数据仅存储在 `localStorage`（`yyc3_session` / `yyc3_ghost`）
+- ⚠️ 对外分发的构建产物**不得**设置 `VITE_ENABLE_GHOST_MODE=true`
 
 ### 数据加密
 
 项目使用以下安全措施：
 
 - ✅ HTTPS 通信（生产环境）
-- ✅ Supabase 提供的加密认证
+- ✅ 不使用第三方身份服务，身份与会话数据不出本机
 - ✅ 敏感信息不记录到日志
 - ✅ WebSocket 连接验证
 
@@ -318,42 +318,35 @@ const apiKey = import.meta.env.VITE_API_KEY;
 - [ ] 错误信息不暴露内部实现细节
 - [ ] 依赖已更新到最新稳定版本
 - [ ] 运行了 `pnpm audit` 检查漏洞
-- [ ] 认证和授权机制已正确实现
+- [ ] 未引入 BaaS（Supabase / Firebase）及其配置项
+- [ ] 生产构建未开启 `VITE_ENABLE_GHOST_MODE`
 - [ ] HTTPS 在生产环境强制使用
 
 ---
 
 ## 🔐 认证与授权
 
-### Supabase 认证
+### 当前形态：本地闭环，无后端鉴权
 
-项目使用 Supabase 进行身份验证：
+本仓不提供云端登录流程。`Login.tsx` 的账密输入仅作视觉引导，提交后直接进入本地会话（Ghost 语义），**不做任何远端校验**。
 
-```typescript
-// 登录
-const { data, error } = await supabase.auth.signInWithPassword({
-  email: 'user@example.com',
-  password: 'secure-password',
-});
+> 🚫 **BaaS 禁令**：不得接入 Supabase / Firebase 等托管身份服务。已移除全部 `VITE_SUPABASE_*` 配置与相关依赖，且不再保留兼容分支。
 
-// 注册
-const { data, error } = await supabase.auth.signUp({
-  email: 'user@example.com',
-  password: 'secure-password',
-});
+### 若需多用户（规划约束）
 
-// 登出
-await supabase.auth.signOut();
-```
+1. 由自建服务端（Fastify + PostgreSQL）签发短期令牌，前端仅作展示与转发；
+2. 服务端令牌不得长期驻留 `localStorage`，应使用会话级存储并设置过期；
+3. 服务端密钥只存在于服务进程环境变量，**禁止**使用 `VITE_` 前缀（会被打包进前端产物）。
 
 ### 会话管理
 
 ```typescript
-// 会话存储在 localStorage
-const SESSION_KEY = 'yyc3-session';
+// 会话与幽灵标记均存储于 localStorage（键名与 src/app/lib/mock-auth.ts 一致）
+const SESSION_KEY = 'yyc3_session';
+const GHOST_KEY = 'yyc3_ghost';
 
-// 会话自动过期
-const MAX_SESSION_AGE = 24 * 60 * 60 * 1000; // 24 小时
+// 会话自带 24 小时有效期：读取时校验 expiresAt，过期即清除
+// 登出（signOutLocal）同时清除上述两个键
 ```
 
 ---
@@ -469,15 +462,14 @@ add_header 'Access-Control-Max-Age' 3600;
 # .env.example
 # 不要将此文件提交到版本控制
 
-# Supabase 配置
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+# 不提供 BaaS 配置（Supabase / Firebase 已移除，禁止重新引入）
+# 注意：VITE_ 前缀变量会被打包进前端产物，禁止写入服务端密钥
 
 # WebSocket 配置
 VITE_WS_URL=wss://yourdomain.com/ws
 
-# Ghost Mode（仅开发）
-VITE_GHOST_MODE=false
+# Ghost Mode 构建开关（生产构建默认关闭，仅开发/自用构建显式置 true）
+VITE_ENABLE_GHOST_MODE=false
 ```
 
 ### TypeScript 安全配置

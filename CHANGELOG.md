@@ -58,6 +58,7 @@ language: zh-CN
 - 🔐 Dependabot 17 项告警清零：undici 7.30.2 / follow-redirects 1.16.3 / qs 6.17.1 / basic-ftp 6.2.6 / fast-uri 3.1.9（作用域收敛，不跨大版本）/ minimatch 11.0.8 / vitest 4.1.12
 - 🩹 `patches/ajv@8.20.0.patch`：ajv 的 URI `serialize()` / `resolve()` 失败降级为返回原值，消除外部畸形 `$id` 中断 schema 编译的边界（fast-uri 版本与安全修复不变）
 - 📄 SECURITY.md 增「漏洞收敛实践」基线：作用域 override → 声明合规核对 → 最小补丁 → 四项回归 + 告警复验
+- 🧹 SECURITY.md Supabase 约束校正（确认不再使用）：删除云鉴权示例与 `VITE_SUPABASE_*` 配置，改为本地闭环（`lib/mock-auth.ts` · Ghost 语义 · `VITE_ENABLE_GHOST_MODE` 生产门禁），发布清单增 BaaS 禁令检查项
 
 ---
 
